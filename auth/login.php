@@ -129,10 +129,10 @@ if (isset($_POST['submit'])) {
         </div>
       </form>
       <p class="text-center text-gray-600 text-xs">
-        &copy;2024 SmartPlants. All rights reserved.
+        &copy;2024 Botaniq Start-Up. All rights reserved.
       </p>
       <div class="mt-4 text-center">
-        <span class="text-gray-600">Don't have an account?</span>
+        <span class="text-gray-600">Just bought new Pots?</span>
         <a href="#" class="text-green-600 hover:text-green-700 font-bold">Sign Up</a>
       </div>
     </div>

@@ -1,6 +1,5 @@
 <?php
 require "../helper/connection.php";
-session_start(); // Start the session to access session variables
 
 // Add CORS headers
 header("Access-Control-Allow-Origin: *"); // Allows all origins, adjust '*' to a specific domain if necessary
@@ -9,19 +8,19 @@ header("Access-Control-Allow-Headers: Content-Type"); // Allow Content-Type head
 
 // Ensure the request is a GET request
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Check if the user is logged in by checking the session
-    if (!isset($_SESSION['login']['id'])) {
+    // Assuming user ID is passed via GET query parameter, e.g., ?user_id=1
+    $userId = isset($_GET['user_id']) ? intval($_GET['user_id']) : 0;
+
+    // If user ID is not provided, return an error response
+    if ($userId === 0) {
         echo json_encode([
             'status' => 'error',
-            'message' => 'User is not logged in.'
+            'message' => 'Invalid user ID'
         ]);
         exit;
     }
 
-    // Get the user ID from the session
-    $userId = $_SESSION['login']['id'];
-
-    // Query the database to get the linked_id for the logged-in user
+    // Query the database to get the linked_id for the user
     if ($connection) {
         $stmt = $connection->prepare("SELECT linked_id FROM users WHERE id = ?");
         $stmt->bind_param("i", $userId);
