@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>SmartPlants - Loading</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="assets/tailwind.css">
+  <link href="style/style.css" rel="stylesheet">
+  <link href="assets/fontawesome/css/all.css" rel="stylesheet">
+
+  <style>
+    @font-face {
+      font-family: 'Montserrat';
+      src: url('assets/montserrat.woff2') format('woff2');
+      font-weight: 100 900;
+      font-style: normal;
+    }
+
+    /* Animation for spinning icon */
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .spinner {
+      animation: spin 1s linear infinite;
+    }
+  </style>
+</head>
+
+<body class="flex flex-col h-screen text-center scroll-smooth bg-gray-100">
+
+  <div class="flex-1 flex flex-col justify-center items-center">
+    <div class="text-center mb-8">
+      <div class="fas fa-spinner text-green-600 loading-icon spinner text-3xl"></div>
+    </div>
+
+    <div class="text-gray-600 text-xl mt-6">
+      Loading, please wait...
+    </div>
+  </div>
+
+</body>
+
+</html>
