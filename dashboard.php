@@ -34,6 +34,8 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 <script src="js/dom.js?v=1"></script>
 <script src="js/data.js?v=1"></script>
+<script src="js/ai-dash.js?v=1"></script>
+
 
 <div class="m-5 p-5 bg-white rounded-3xl shadow-lg">
   <img src="">
@@ -82,7 +84,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     </div>
     <!-- GREAT, GOOD, OKAY, NOT BAD, HELP ME! -->
     <div class="bg-blue-500 rounded-3xl px-8 flex items-center justify-center h-full">
-      <span class="text-sm md:text-lg font-bold text-white"><i>Not Bad</i></span>
+      <span class="text-sm md:text-lg font-bold text-white"><i id="ai-stats">Not Bad</i></span>
     </div>
   </div>
 </div>
