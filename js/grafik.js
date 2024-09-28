@@ -53,7 +53,7 @@ function updateCharts(payload) {
 
 // Ambil data dari API setiap interval waktu
 function fetchData() {
-  fetch('http://localhost/botaniq/backend/load_data.php')
+  fetch('https://botaniq.cogarden.app/backend/load_data.php')
     .then(response => response.json())
     .then(data => {
       // Perbarui grafik hanya jika ada data baru

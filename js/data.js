@@ -1,5 +1,5 @@
 function load_data() {
-  fetch('http://localhost/botaniq/backend/load_data.php') //SESUAIKAN
+  fetch('https://botaniq.cogarden.app/backend/load_data.php') //SESUAIKAN
     .then(response => response.json())
     .then(data => {
       console.log(data);
