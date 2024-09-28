@@ -48,7 +48,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     $articleUuid = $article['uuid'];
     $contentWords = explode(' ', $articleContent);
     $excerpt = implode(' ', array_slice($contentWords, 0, 40)) . '...';
-    $readMoreLink = "https://botaniq.app/viewarticles?arc=" . urlencode($articleUuid);
+    $readMoreLink = "https://botaniq.cogarden.app/viewarticles?arc=" . urlencode($articleUuid);
 ?>
 
     <!-- Dynamic Article Section -->
