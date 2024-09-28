@@ -22,7 +22,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     $excerpt = implode(' ', array_slice($contentWords, 0, 40)) . '...';
     
     // Generate the URL for the "Read More" link
-    $readMoreLink = "http://botaniq.test/viewarticles?arc=" . urlencode($articleUuid);
+    $readMoreLink = "https://botaniq.cogarden.app/viewarticles?arc=" . urlencode($articleUuid);
 } else {
     // If no article is found, set default values
     $articleTitle = "No articles available";
