@@ -19,8 +19,7 @@ require_once './layout/sidebar.php';
 
   <!-- Include the Chart.js library before your custom script -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="js/grafik.js"></script>
-
+  <script src="js/grafik.js?v=1"></script>
 <?php
 require_once './layout/bottom.php';
 ?>
