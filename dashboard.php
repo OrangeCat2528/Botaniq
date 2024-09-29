@@ -34,9 +34,10 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 <script src="js/dom.js?v=1"></script>
 <script src="js/data.js?v=3"></script>
-<script src="js/ai-dash.js?v=6"></script>
+<script src="js/ai-dash.js?v=8"></script>
 
-<div class="m-5 p-5 bg-white rounded-3xl shadow-lg">
+<div id="avatar-container" class="m-5 p-5 bg-white rounded-3xl shadow-lg">
+    <!-- Avatar akan di sini -->
 </div>
 
 <!-- Status Section (No Changes) -->

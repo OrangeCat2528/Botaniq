@@ -18,13 +18,20 @@ function isNightMode() {
 }
 
 function updateAvatar(videoSrc) {
-  const avatarDiv = document.querySelector('.m-5.p-5.bg-white.rounded-3xl.shadow-lg');
+  const avatarDiv = document.getElementById('avatar-container'); // Menggunakan ID "avatar-container"
+  
+  if (!avatarDiv) {
+      console.error("Avatar container not found in the DOM.");
+      return;
+  }
+
   avatarDiv.innerHTML = `
       <video autoplay loop muted class="w-full rounded-3xl">
           <source src="/assets/avatars/${videoSrc}" type="video/mp4">
           Your browser does not support the video tag.
       </video>
   `;
+  console.log(`Avatar updated with video: ${videoSrc}`);
 }
 
 function selectRandomVideo(videos) {
@@ -84,6 +91,7 @@ function load_data() {
   fetch('https://botaniq.cogarden.app/backend/load_data.php')
       .then(response => response.json())
       .then(data => {
+          console.log('Data fetched:', data); // Log untuk melihat apakah data berhasil di-fetch
           const data1Element = document.getElementById('data1');
           const data2Element = document.getElementById('data2');
           const data3Element = document.getElementById('data3');
@@ -104,5 +112,9 @@ function load_data() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  setInterval(load_data, 500);
+  console.log('DOM fully loaded and parsed'); // Log untuk memastikan DOM sudah siap
+  setInterval(() => {
+      console.log('Interval triggered'); // Log untuk memastikan interval berjalan
+      load_data();
+  }, 500);
 });
