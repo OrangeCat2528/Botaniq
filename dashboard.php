@@ -33,7 +33,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 ?>
 
 <script src="js/dom.js?v=1"></script>
-<script src="js/data.js?v=3"></script>
+<script src="js/data.js?v=9"></script>
 <script src="js/ai-dash.js?v=8"></script>
 
 <div id="avatar-container" class="m-5 p-5 bg-white rounded-3xl shadow-lg">
