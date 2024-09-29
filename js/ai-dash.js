@@ -15,9 +15,15 @@ function updateAIStats() {
       const aiStatsElement = document.getElementById('ai-stats');
       
       // Ambil nilai temp, humidity, dan soil dari data
-      const temp = data.temp;
-      const humidity = data.humidity;
-      const soil = data.soil;
+      const temp = parseFloat(data.temp);
+      const humidity = parseFloat(data.humidity);
+      const soil = parseFloat(data.soil);
+
+      // Cek apakah data yang diterima valid
+      if (isNaN(temp) || isNaN(humidity) || isNaN(soil)) {
+        if (aiStatsElement) aiStatsElement.textContent = "Data tidak valid: nilai tidak dapat dihitung";
+        return;
+      }
 
       // Tentukan status tanaman berdasarkan nilai yang diambil dari backend
       const plantStatus = determinePlantStatus(temp, humidity, soil);
@@ -31,28 +37,27 @@ function updateAIStats() {
 // Fungsi untuk menentukan status tanaman
 function determinePlantStatus(temp, humidity, soil) {
   // BLOOMING! 🌷✨
-  if (temp >= 24 && temp <= 28 && humidity >= 55 && humidity <= 65 && soil >= 70 && soil <= 80) {
+  if (temp >= 22 && temp <= 30 && humidity >= 55 && humidity <= 65 && soil >= 65 && soil <= 80) {
       return "BLOOMING! 🌷✨";
   }
 
   // SHINING BRIGHT! 🌟
-  if (temp > 28 && temp <= 30 && humidity >= 50 && humidity <= 60 && soil >= 65 && soil <= 75) {
+  if (temp > 30 && temp <= 34 && humidity >= 50 && humidity <= 60 && soil >= 60 && soil <= 75) {
       return "SHINING BRIGHT! 🌟";
   }
 
   // DOING FINE! 🌷
-  // Menyesuaikan rentang humidity sedikit untuk mengakomodasi nilai 56
-  if (temp >= 22 && temp <= 32 && humidity >= 45 && humidity <= 56 && soil >= 60 && soil <= 70) {
+  if (temp >= 20 && temp <= 35 && humidity >= 45 && humidity <= 70 && soil >= 60 && soil <= 70) {
       return "DOING FINE! 🌷";
   }
 
   // A LITTLE DOWN... 😕
-  if (temp >= 18 && temp <= 34 && humidity >= 40 && humidity <= 50 && soil >= 50 && soil <= 60) {
+  if (temp >= 18 && temp <= 38 && humidity >= 40 && humidity <= 75 && soil >= 50 && soil <= 65) {
       return "A LITTLE DOWN... 😕";
   }
 
   // HELP ME, PLEASE! 🆘
-  if (temp < 18 || temp > 35 || humidity < 40 || humidity > 70 || soil < 50) {
+  if (temp < 18 || temp > 38 || humidity < 40 || humidity > 75 || soil < 50) {
       return "HELP ME, PLEASE! 🆘";
   }
 
