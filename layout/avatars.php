@@ -1,8 +1,8 @@
 <?php
 // Enable CORS by allowing any origin (or restrict to specific domains if needed)
-header("Access-Control-Allow-Origin: *"); // Allow access from any domain
-header("Access-Control-Allow-Methods: GET, POST"); // Allow GET and POST requests
-header("Access-Control-Allow-Headers: Content-Type"); // Allow specific headers
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST");
+header("Access-Control-Allow-Headers: Content-Type");
 ?>
 
 <!DOCTYPE html>
@@ -11,7 +11,7 @@ header("Access-Control-Allow-Headers: Content-Type"); // Allow specific headers
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Botaniq Avatars</title>
-    <script src="https://cdn.tailwindcss.com"></script> <!-- Use CDN for TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="assets/fontawesome/css/all.css" rel="stylesheet"> <!-- Font Awesome Icons -->
 
     <style>
@@ -47,7 +47,7 @@ header("Access-Control-Allow-Headers: Content-Type"); // Allow specific headers
             align-items: center;
             width: 100vw;
             height: 100vh;
-            background-color: white; /* White background for remaining space */
+            background-color: white;
         }
 
         /* Ensuring the GIF maintains its aspect ratio and is centered */
@@ -55,7 +55,6 @@ header("Access-Control-Allow-Headers: Content-Type"); // Allow specific headers
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            /* Ensures the image covers the largest area without distortion */
         }
     </style>
 </head>
@@ -100,8 +99,8 @@ header("Access-Control-Allow-Headers: Content-Type"); // Allow specific headers
         }
 
         function loadAvatar(temp, humidity, soil) {
-            const isMoistureLow = soil < 58 || soil > 61;
-            const isHumidityLow = humidity < 58 || humidity > 61;
+            const isMoistureLow = soil < 60 || soil > 70;  // Adjusted the range for better control
+            const isHumidityLow = humidity < 60 || humidity > 70;  // Adjusted range
             const isTempLow = temp < 20;
 
             let selectedGif;
