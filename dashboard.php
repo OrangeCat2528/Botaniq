@@ -35,9 +35,9 @@ if ($result && mysqli_num_rows($result) > 0) {
 <script src="js/dom.js?v=1"></script>
 <script src="js/data.js?v=3"></script>
 <script src="js/ai-dash.js?v=5"></script>
+<script src="js/avatars.js?v=1"></script>
 
 <div class="m-5 p-5 bg-white rounded-3xl shadow-lg">
-  <img src="">
 </div>
 
 <!-- Status Section (No Changes) -->
@@ -82,7 +82,8 @@ if ($result && mysqli_num_rows($result) > 0) {
       <span class="text-gray-600 ">What AI Said?</span>
     </div>
 
-    <div class="bg-blue-500 rounded-3xl px-8 flex items-center justify-center h-full">
+    <!-- ai nya boongan, ubah px-8 jadi px-4 buat optimisasi web -->
+    <div class="bg-blue-500 rounded-3xl px-4 flex items-center justify-center h-full">
       <span class="text-sm md:text-lg font-bold text-white"><i id="ai-stats">Loading...</i></span>
     </div>
   </div>
@@ -108,7 +109,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 <!-- Last Update (No Changes) -->
 <div class="bg-white rounded-3xl p-2 mx-10 mt-5 shadow-md text-xs fixed bottom-28 left-0 right-0">
   <span>Last update : </span>
-  <span id="last-waktu">Connecting to Database...</span>
+  <span id="last-waktu">Connecting to IoT..</span>
 </div>
 
 <?php
