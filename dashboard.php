@@ -32,7 +32,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 ?>
 
-<script src="js/dom.js?v=1"></script>
+<script src="js/dom.js?v=2"></script>
 <script src="js/data.js?v=9"></script>
 <script src="js/ai-dash.js?v=12"></script>
 
