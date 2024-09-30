@@ -44,36 +44,36 @@ function determinePlantStatus(temp, humidity, soil) {
   // BLOOMING! 🌷✨
   if (temp >= 22 && temp <= 30 && humidity >= 55 && humidity <= 70 && soil >= 65 && soil <= 80) {
       console.log("Plant status: BLOOMING! 🌷✨");
-      return "BLOOMING! 🌷✨";
+      return "BLOOMING!";
   }
 
   // SHINING BRIGHT! 🌟
   if (temp > 30 && temp <= 34 && humidity >= 50 && humidity <= 70 && soil >= 60 && soil <= 75) {
       console.log("Plant status: SHINING BRIGHT! 🌟");
-      return "SHINING BRIGHT! 🌟";
+      return "SHINING BRIGHT!";
   }
 
   // DOING FINE! 🌷
   if (temp >= 20 && temp <= 35 && humidity >= 45 && humidity <= 70 && soil >= 60 && soil <= 75) {
       console.log("Plant status: DOING FINE! 🌷");
-      return "DOING FINE! 🌷";
+      return "DOING FINE!";
   }
 
   // A LITTLE DOWN... 😕
   if (temp >= 18 && temp <= 38 && humidity >= 40 && humidity <= 75 && soil >= 50 && soil <= 65) {
       console.log("Plant status: A LITTLE DOWN... 😕");
-      return "A LITTLE DOWN... 😕";
+      return "A LITTLE DOWN...";
   }
 
   // HELP ME, PLEASE! 🆘
   if (temp < 18 || temp > 38 || humidity < 40 || humidity > 75 || soil < 50) {
       console.log("Plant status: HELP ME, PLEASE! 🆘");
-      return "HELP ME, PLEASE! 🆘";
+      return "HELP ME, PLEASE!";
   }
 
   // Jika tidak ada kondisi yang cocok, kembalikan status default
   console.log("Plant status: Data tidak valid");
-  return `Data tidak valid: temp=${temp}, humidity=${humidity}, soil=${soil}`;
+  return `THINKING..`;
 }  
 
 // Panggil fungsi ketika halaman sudah selesai di-load

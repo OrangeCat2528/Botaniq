@@ -34,7 +34,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 <script src="js/dom.js?v=2"></script>
 <script src="js/data.js?v=9"></script>
-<script src="js/ai-dash.js?v=12"></script>
+<script src="js/ai-dash.js?v=13"></script>
 
 <div id="avatar-container" class="m-5 p-2 bg-white rounded-xl shadow-lg flex justify-center items-center">
     <iframe src="/layout/avatars.php" frameborder="0" width="100%" style="height: 18vh; max-height: 230px; display: block;"></iframe>
