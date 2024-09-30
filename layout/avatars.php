@@ -158,7 +158,7 @@ header("Access-Control-Allow-Headers: Content-Type");
                 
                 // Hide the preloader
                 preloader.style.display = 'none';
-            }, 2000);  // 2 second delay for spinner
+            }, 1000);  // 2 second delay for spinner
         });
 
         document.addEventListener('DOMContentLoaded', () => {
