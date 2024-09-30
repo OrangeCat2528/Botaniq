@@ -71,7 +71,7 @@ header("Access-Control-Allow-Headers: Content-Type");
 
     <!-- Avatar GIF Container -->
     <div class="avatar-container">
-        <img id="avatar-gif" src="/assets/avatars/good.gif" alt="Avatar GIF">
+        <img id="avatar-gif" src="" alt="Avatar GIF">
     </div>
 
     <script>
@@ -148,29 +148,17 @@ header("Access-Control-Allow-Headers: Content-Type");
             }, 5000); // Update every 5 seconds
         }
 
-        // Hide preloader after all gifs are loaded
+        // Hide preloader after all gifs are loaded with 2 second delay
         window.addEventListener('load', function () {
             const preloader = document.getElementById('preloader');
 
-            const images = document.querySelectorAll('img');
-            let imagesLoaded = 0;
-
-            images.forEach((img) => {
-                if (img.complete) {
-                    imagesLoaded++;
-                } else {
-                    img.addEventListener('load', () => {
-                        imagesLoaded++;
-                        if (imagesLoaded === images.length) {
-                            preloader.style.display = 'none';
-                        }
-                    });
-                }
-            });
-
-            if (imagesLoaded === images.length) {
+            setTimeout(function() {
+                // Randomize avatar on initial load
+                avatarImage.src = `/assets/avatars/${selectRandomGif(normalGifs)}`;
+                
+                // Hide the preloader
                 preloader.style.display = 'none';
-            }
+            }, 2000);  // 2 second delay for spinner
         });
 
         document.addEventListener('DOMContentLoaded', () => {
