@@ -16,8 +16,18 @@ if (isset($_POST['submit'])) {
 
         if ($result && $row = $result->fetch_assoc()) {
             if ($password === $row['password']) {  // Compare passwords (unencrypted, use hash comparison in production)
-                if (is_null($row['linked_id'])) {
-                    // Redirect to the "connect" page if the user's account is not linked
+                // If linked_id is NULL, set it to 0 for session data
+                $linked_id = is_null($row['linked_id']) ? 0 : $row['linked_id'];
+
+                // Store the user data in the session
+                $_SESSION['login'] = [
+                    'id' => $row['id'],
+                    'username' => $row['username'],
+                    'linked_id' => $linked_id
+                ];
+
+                // Redirect based on whether linked_id is 0
+                if ($linked_id === 0) {
                     $message = "<script>
                                   Swal.fire({
                                       icon: 'warning',
@@ -30,12 +40,7 @@ if (isset($_POST['submit'])) {
                                   });
                                 </script>";
                 } else {
-                    // Store the relevant user information in the session
-                    $_SESSION['login'] = [
-                        'id' => $row['id'],
-                        'username' => $row['username'],
-                        'linked_id' => $row['linked_id']
-                    ];
+                    // Redirect to dashboard
                     $message = "<script>
                                   Swal.fire({
                                       icon: 'success',
