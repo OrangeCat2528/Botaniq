@@ -32,7 +32,7 @@ if (isset($_POST['submit'])) {
                                   Swal.fire({
                                       icon: 'warning',
                                       title: 'Link your account',
-                                      text: 'Please link your account to proceed!',
+                                      text: 'Please link your device to proceed!',
                                       showConfirmButton: false,
                                       timer: 1500
                                   }).then(() => {

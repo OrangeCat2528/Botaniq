@@ -22,7 +22,7 @@ if ($connection) {
 
     // If linked_id is already set (not null), redirect to dashboard
     if ($linked_id !== null) {
-        header('Location: dashboard.php');
+        header('Location: dashboard');
         exit;
     }
 } else {
