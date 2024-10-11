@@ -16,19 +16,40 @@ if (isset($_POST['submit'])) {
 
         if ($result && $row = $result->fetch_assoc()) {
             if ($password === $row['password']) {  // Compare passwords (unencrypted, use hash comparison in production)
-                $_SESSION['login'] = $row;
-                $message = "<script>
-                              Swal.fire({
-                                  icon: 'success',
-                                  title: 'Logged In',
-                                  text: 'Welcome Back, " . $username . "!',
-                                  showConfirmButton: false,
-                                  timer: 1500
-                              }).then(() => {
-                                  window.location.href = '../dashboard';
-                              });
-                            </script>";
+                if (is_null($row['linked_id'])) {
+                    // Redirect to the "connect" page if the user's account is not linked
+                    $message = "<script>
+                                  Swal.fire({
+                                      icon: 'warning',
+                                      title: 'Link your account',
+                                      text: 'Please link your account to proceed!',
+                                      showConfirmButton: false,
+                                      timer: 1500
+                                  }).then(() => {
+                                      window.location.href = '../connect';
+                                  });
+                                </script>";
+                } else {
+                    // Store the relevant user information in the session
+                    $_SESSION['login'] = [
+                        'id' => $row['id'],
+                        'username' => $row['username'],
+                        'linked_id' => $row['linked_id']
+                    ];
+                    $message = "<script>
+                                  Swal.fire({
+                                      icon: 'success',
+                                      title: 'Logged In',
+                                      text: 'Welcome Back, " . $username . "!',
+                                      showConfirmButton: false,
+                                      timer: 1500
+                                  }).then(() => {
+                                      window.location.href = '../dashboard';
+                                  });
+                                </script>";
+                }
             } else {
+                // Invalid password
                 $message = "<script>
                               Swal.fire({
                                   icon: 'error',
@@ -38,6 +59,7 @@ if (isset($_POST['submit'])) {
                             </script>";
             }
         } else {
+            // No user found
             $message = "<script>
                           Swal.fire({
                               icon: 'error',
@@ -49,6 +71,7 @@ if (isset($_POST['submit'])) {
 
         $stmt->close();
     } else {
+        // Connection to the database failed
         $message = "Database connection failed.";
     }
 }
