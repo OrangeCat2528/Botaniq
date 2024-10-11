@@ -1,3 +1,57 @@
+<?php
+require_once '../helper/connection.php';
+session_start();
+
+$message = '';
+
+if (isset($_POST['submit'])) {
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
+
+    if ($password !== $confirm_password) {
+        $message = "<script>
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'Password mismatch',
+                          text: 'Please re-enter your password!'
+                      });
+                    </script>";
+    } else {
+        $encrypt_key = getenv('ENCRYPT_DATA');
+        $encrypted_password = openssl_encrypt($password, 'AES-256-CBC', $encrypt_key, 0, '1234567890123456');
+        $stmt = $connection->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
+        $stmt->bind_param("ss", $username, $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $message = "<script>
+                          Swal.fire({
+                              icon: 'error',
+                              title: 'Username or email already exists',
+                              text: 'Please try again!'
+                          });
+                        </script>";
+        } else {
+            $stmt = $connection->prepare("INSERT INTO users (username, email, password, linked_id) VALUES (?, ?, ?, NULL)");
+            $stmt->bind_param("sss", $username, $email, $encrypted_password);
+            $stmt->execute();
+            $message = "<script>
+                          Swal.fire({
+                              icon: 'success',
+                              title: 'Registration successful',
+                              text: 'Please login to continue!'
+                          }).then(() => {
+                              window.location.href = '../login';
+                          });
+                        </script>";
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
