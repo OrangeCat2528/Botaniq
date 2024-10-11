@@ -15,20 +15,37 @@ if (isset($_POST['submit'])) {
         $result = $stmt->get_result();
 
         if ($result && $row = $result->fetch_assoc()) {
-            if ($password === $row['password']) {  // Compare passwords (unencrypted, use hash comparison in production)
-                $_SESSION['login'] = $row;
-                $message = "<script>
-                              Swal.fire({
-                                  icon: 'success',
-                                  title: 'Logged In',
-                                  text: 'Welcome Back, " . $username . "!',
-                                  showConfirmButton: false,
-                                  timer: 1500
-                              }).then(() => {
-                                  window.location.href = '../dashboard';
-                              });
-                            </script>";
+            if ($password === $row['password']) { 
+                if (is_null($row['linked_id'])) {
+                    // Redirect to the "connect" page if the user's account is not linked
+                    $message = "<script>
+                                  Swal.fire({
+                                      icon: 'warning',
+                                      title: 'Link your account',
+                                      text: 'Please link your account to proceed!',
+                                      showConfirmButton: false,
+                                      timer: 1500
+                                  }).then(() => {
+                                      window.location.href = '../connect';
+                                  });
+                                </script>";
+                } else {
+                    // Store user ID in session and redirect to dashboard if everything is correct
+                    $_SESSION['login'] = $row['id'];
+                    $message = "<script>
+                                  Swal.fire({
+                                      icon: 'success',
+                                      title: 'Logged In',
+                                      text: 'Welcome Back, " . $username . "!',
+                                      showConfirmButton: false,
+                                      timer: 1500
+                                  }).then(() => {
+                                      window.location.href = '../dashboard';
+                                  });
+                                </script>";
+                }
             } else {
+                // Invalid password
                 $message = "<script>
                               Swal.fire({
                                   icon: 'error',
@@ -38,6 +55,7 @@ if (isset($_POST['submit'])) {
                             </script>";
             }
         } else {
+            // No user found
             $message = "<script>
                           Swal.fire({
                               icon: 'error',
@@ -75,7 +93,6 @@ if (isset($_POST['submit'])) {
     }
   </style>
 
-  <!-- SweetAlert2 CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 
@@ -83,7 +100,6 @@ if (isset($_POST['submit'])) {
 
 <div class="flex-1 flex flex-col justify-center items-center">
     <div class="text-center mb-8">
-      <!-- Replace the FontAwesome icon with an image -->
       <img src="/assets/img/superapp-login-logo-only.png" alt="Botaniq SuperApp Logo" class="w-32 h-32 mx-auto"> <!-- Adjust width and height as needed -->
       <div class="mt-3 text-gray-600">
         <span class="font-extrabold text-3xl">Botaniq SuperApp</span>
