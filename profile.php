@@ -5,14 +5,14 @@ require_once './layout/header.php';
 require_once './layout/sidebar.php';
 ?>
 
-<div class="flex flex-col items-center min-h-screen bg-gray-50">
+<div class="flex flex-col items-center bg-gray-50 min-h-screen pt-2">
     <!-- Profile Image Section -->
-    <div id="avatar-container" class="m-5 p-2 bg-white rounded-xl shadow-lg flex justify-center items-center">
+    <div id="avatar-container" class="p-2 bg-white rounded-xl shadow-sm flex justify-center items-center">
         <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="Profile Image" class="w-24 h-24 rounded-full border-2 border-gray-300">
     </div>
 
     <!-- User Info Section -->
-    <div class="text-center mb-6">
+    <div class="text-center mb-4 mt-2">
         <h2 class="text-lg font-bold text-gray-700">Username</h2>
         <p class="text-sm text-gray-500">User Role</p>
     </div>
@@ -27,8 +27,8 @@ require_once './layout/sidebar.php';
         </a>
     </div>
 
-    <!-- User Activity or Notification Section -->
-    <div class="m-5 bg-white rounded-3xl shadow-lg w-full max-w-md">
+    <!-- User Activity Section -->
+    <div class="w-full max-w-md m-5 bg-white rounded-3xl shadow-lg">
         <div class="bg-green-500 text-white rounded-t-3xl px-3 py-2 text-center flex justify-center items-center">
             <i class="fas fa-bell text-yellow-300 mr-2"></i> 
             <p class="text-sm md:text-base font-bold">Recent Activity</p>
@@ -38,8 +38,8 @@ require_once './layout/sidebar.php';
         </div>
     </div>
 
-    <!-- Profile Info or Summary Section -->
-    <div class="m-5 bg-white rounded-3xl shadow-lg w-full max-w-md">
+    <!-- Profile Summary Section -->
+    <div class="w-full max-w-md m-5 bg-white rounded-3xl shadow-lg">
         <div class="bg-blue-500 text-white rounded-t-3xl px-3 py-2 text-center flex justify-center items-center">
             <i class="fas fa-info-circle text-white mr-2"></i> 
             <p class="text-sm md:text-base font-bold">Profile Summary</p>
@@ -49,7 +49,7 @@ require_once './layout/sidebar.php';
         </div>
     </div>
 
-    <div class="invisible h-32"></div>
+    <div class="invisible h-20"></div>
 </div>
 
 
