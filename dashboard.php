@@ -37,14 +37,11 @@ if ($result && mysqli_num_rows($result) > 0) {
 <script src="js/ai-dash.js?v=13"></script>
 <script src="js/notifier.js?v=1"></script>
 
-<div class="warning-sign m-5 p-4 bg-yellow-400 rounded-3xl shadow-lg text-center flex flex-col justify-center items-center hidden">
-  <div class="flex items-center justify-center">
+<div class="warning-sign m-5 p-4 bg-red-500 rounded-3xl shadow-lg text-center flex flex-col justify-center items-center hidden">
+  <div class="flex items-center justify-center text-white">
     <i class="fas fa-exclamation-triangle text-xl mr-2"></i>
-    <span class="font-bold text-lg">Warning</span>
+    <span class="font-bold text-lg">Pot is Offline, Check Device Connection.</span>
   </div>
-  <p class="mt-2">
-    Pot is Offline, Check Device Connection.
-  </p>
 </div>
 
 <div id="avatar-container" class="m-5 p-2 bg-white rounded-xl shadow-lg flex justify-center items-center">
