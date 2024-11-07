@@ -5,17 +5,16 @@ require_once './layout/header.php';
 require_once './layout/sidebar.php';
 ?>
 
-<!--
 <div class="m-5 p-4 bg-yellow-400 rounded-3xl shadow-lg text-center flex flex-col justify-center items-center">
   <div class="flex items-center justify-center">
     <i class="fas fa-exclamation-triangle text-xl mr-2"></i>
-    <span class="font-bold text-lg">Information</span>
+    <span class="font-bold text-lg">Warning</span>
   </div>
   <p class="mt-2">
-    AI is on Alpha Development. AI may not Give Accurate Information!
+    Pot is Offline, Check Device Connection.
   </p>
 </div>
--->
+
 <!-- Gambar Section menggantikan Camera View -->
 <div class="shadow-lg rounded-3xl max-w-xs mx-auto overflow-hidden">
   <!-- Menggunakan tag img dan ukuran tetap sama dengan class yang digunakan sebelumnya -->
