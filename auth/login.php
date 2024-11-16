@@ -109,6 +109,16 @@ if (isset($_POST['submit'])) {
 
 <body class="flex flex-col h-screen text-center scroll-smooth bg-white">
 
+<div class="m-5 p-4 bg-yellow-400 rounded-3xl shadow-lg text-center flex flex-col justify-center items-center">
+  <div class="flex items-center justify-center">
+    <i class="fas fa-exclamation-triangle text-xl mr-2"></i>
+    <span class="font-bold text-lg">Information</span>
+  </div>
+  <p class="mt-2">
+  Our application is under heavy development. Some features are not yet available and will be added soon. Thank you for your attention.
+  </p>
+</div>
+
 <div class="flex-1 flex flex-col justify-center items-center">
     <div class="text-center mb-8">
       <!-- Replace the FontAwesome icon with an image -->
@@ -161,7 +171,7 @@ if (isset($_POST['submit'])) {
       </p>
       <div class="mt-4 text-center">
         <span class="text-gray-600">Just bought new Pots?</span>
-        <a href="#" class="text-green-600 hover:text-green-700 font-bold">Sign Up</a>
+        <a href="register" class="text-green-600 hover:text-green-700 font-bold">Sign Up</a>
       </div>
     </div>
   </div>

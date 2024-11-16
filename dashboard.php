@@ -1,30 +1,22 @@
 <?php
-require_once './helper/connection.php'; // Make sure to include the correct connection file
+require_once './helper/connection.php';
 require_once './layout/top.php';
 require_once './layout/header.php';
 require_once './layout/sidebar.php';
 
-// Fetch the latest article from the database (article with the highest ID)
-$query = "SELECT * FROM articles ORDER BY id DESC LIMIT 1"; // Get the article with the highest ID
+$query = "SELECT * FROM articles ORDER BY id DESC LIMIT 1";
 $result = mysqli_query($connection, $query);
 
 // Check if an article is found
 if ($result && mysqli_num_rows($result) > 0) {
     $latestArticle = mysqli_fetch_assoc($result);
-    
-    // Extract the title and content
     $articleTitle = $latestArticle['judul'];
     $articleContent = $latestArticle['isian'];
     $articleUuid = $latestArticle['uuid'];
-    
-    // Split the content into words and display the first 40 words followed by "..."
     $contentWords = explode(' ', $articleContent);
     $excerpt = implode(' ', array_slice($contentWords, 0, 40)) . '...';
-    
-    // Generate the URL for the "Read More" link
     $readMoreLink = "https://botaniq.cogarden.app/viewarticles?arc=" . urlencode($articleUuid);
 } else {
-    // If no article is found, set default values
     $articleTitle = "No articles available";
     $excerpt = "";
     $readMoreLink = "#";
@@ -36,6 +28,8 @@ if ($result && mysqli_num_rows($result) > 0) {
 <script src="js/data.js?v=11"></script>
 <script src="js/ai-dash.js?v=13"></script>
 <script src="js/notifier.js?v=1"></script>
+<script src="tangki-air.js?v=1"></script>
+<script src="cuaca.js?v=1"></script>
 
 <div class="warning-sign m-5 p-4 bg-yellow-400 rounded-3xl shadow-lg text-center flex flex-col justify-center items-center hidden">
   <div class="flex items-center justify-center">
@@ -51,9 +45,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     <iframe src="/layout/avatars.php" frameborder="0" width="100%" style="height: 18vh; max-height: 230px; display: block;"></iframe>
 </div>
 
-<!-- Status Section (No Changes) -->
 <div class="m-5 mb-6 grid grid-cols-3 gap-5">
-  <!-- Temp Status -->
   <div class="bg-white shadow-md rounded-3xl p-5">
     <div class="flex justify-between items-center md:justify-center md:gap-2">
       <span class="text-3xl md:text-5xl font-bold text-blue-500" id="data1">0</span>
@@ -62,8 +54,6 @@ if ($result && mysqli_num_rows($result) > 0) {
     <i class="fas fa-check-circle text-2xl mt-1 mb-2 text-green-600" id="icon-status1"></i>
     <div class="grid items-center text-xs font-bold text-gray-700">Temp Status</div>
   </div>
-
-  <!-- Humidity Status -->
   <div class="bg-white shadow-md rounded-3xl p-5">
     <div class="flex justify-between items-center md:justify-center md:gap-2">
       <span class="text-3xl md:text-5xl font-bold text-green-600" id="data2">0</span>
@@ -72,8 +62,6 @@ if ($result && mysqli_num_rows($result) > 0) {
     <i class="fas fa-check-circle text-2xl mt-1 mb-2 text-green-600" id="icon-status2"></i>
     <div class="grid items-center text-xs font-bold text-gray-700">Humidity Status</div>
   </div>
-
-  <!-- Soil Status -->
   <div class="bg-white shadow-md rounded-3xl p-5">
     <div class="flex justify-between items-center md:justify-center md:gap-2">
       <span class="text-3xl md:text-5xl font-bold text-yellow-500" id="data3">0</span>
@@ -85,9 +73,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 </div>
 
 <div class="m-5 bg-white rounded-3xl shadow-lg h-12 flex items-center p-0">
-  <!-- Temperature Section -->
   <div class="flex justify-between items-center w-full h-full">
-    <!-- Icon and Label -->
     <div class="flex items-center pl-4">
       <i class="fas fa-robot text-yellow-500 mr-2"></i>
       <span class="text-gray-600 ">What AI Said?</span>
@@ -108,7 +94,6 @@ if ($result && mysqli_num_rows($result) > 0) {
   </div>
   
   <div class="p-5">
-    <!-- Dynamic title and content -->
     <p class="text-sm md:text-lg text-gray-700 font-bold leading-relaxed"><?php echo htmlspecialchars($articleTitle); ?></p>  
     <p class="text-sm md:text-lg text-gray-700 leading-relaxed"><?php echo htmlspecialchars($excerpt); ?></p>
     <a class="text-sm md:text-lg text-gray-700 leading-relaxed underline" href="<?php echo htmlspecialchars($readMoreLink); ?>">Read More</a>
@@ -116,8 +101,6 @@ if ($result && mysqli_num_rows($result) > 0) {
 </div>
 
 <div class="invisible h-32"></div>
-
-<!-- Last Update (No Changes) -->
 <div class="bg-white rounded-3xl p-2 mx-10 mt-5 shadow-md text-xs fixed bottom-28 left-0 right-0">
   <span>Last update : </span>
   <span id="last-waktu">Connecting to IoT..</span>

@@ -11,7 +11,7 @@ require_once './layout/sidebar.php';
     <span class="font-bold text-lg">Warning</span>
   </div>
   <p class="mt-2">
-    Pot is Offline, Check Device Connection.
+  AI is undergoing maintenance. Please wait
   </p>
 </div>
 
