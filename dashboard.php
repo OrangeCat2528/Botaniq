@@ -21,15 +21,15 @@ if ($result && mysqli_num_rows($result) > 0) {
     $excerpt = "";
     $readMoreLink = "#";
 }
-
 ?>
 
 <script src="js/dom.js?v=2"></script>
 <script src="js/data.js?v=11"></script>
 <script src="js/ai-dash.js?v=13"></script>
 <script src="js/notifier.js?v=1"></script>
-<script src="tangki-air.js?v=1"></script>
-<script src="cuaca.js?v=1"></script>
+<script src="js/cuaca.js?v=5"></script>
+<script src="js/tangki-air.js?v=14"></script>
+<link href="assets/watertank.css?v=9" rel="stylesheet"></link>
 
 <div class="warning-sign m-5 p-4 bg-yellow-400 rounded-3xl shadow-lg text-center flex flex-col justify-center items-center hidden">
   <div class="flex items-center justify-center">
@@ -44,6 +44,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 <div id="avatar-container" class="m-5 p-2 bg-white rounded-xl shadow-lg flex justify-center items-center">
     <iframe src="/layout/avatars.php" frameborder="0" width="100%" style="height: 18vh; max-height: 230px; display: block;"></iframe>
 </div>
+
 
 <div class="m-5 mb-6 grid grid-cols-3 gap-5">
   <div class="bg-white shadow-md rounded-3xl p-5">
@@ -72,21 +73,21 @@ if ($result && mysqli_num_rows($result) > 0) {
   </div>
 </div>
 
-<div class="m-5 bg-white rounded-3xl shadow-lg h-12 flex items-center p-0">
-  <div class="flex justify-between items-center w-full h-full">
-    <div class="flex items-center pl-4">
-      <i class="fas fa-robot text-yellow-500 mr-2"></i>
-      <span class="text-gray-600 ">What AI Said?</span>
-    </div>
+<div id="weather-container" class="m-5 rounded-3xl p-2 flex justify-center items-center text-white text-center" style="height: 50px; background: linear-gradient(to right, #ccc, #fff);">
+  <i id="weather-icon" class="fas fa-cloud text-xl mr-2"></i>
+  <span class="text-sm font-bold" id="weather-text">Loading...</span>
+</div>
 
-    <!-- ai nya boongan, ubah px-8 jadi px-4 buat optimisasi web -->
-    <div class="bg-blue-500 rounded-3xl px-4 flex items-center justify-center h-full">
-      <span class="text-sm md:text-lg font-bold text-white"><i id="ai-stats">Loading...</i></span>
-    </div>
+<div id="water-tank-container" class="relative mx-auto overflow-hidden bg-gray-100 rounded-3xl">
+  <svg id="svg-container" xmlns="http://www.w3.org/2000/svg" class="absolute top-0 left-0 w-full h-full">
+    <path id="wave-path" class="fill-blue-500"></path>
+  </svg>
+  <div id="water-text" class="absolute inset-0 flex items-center justify-center text-sm font-bold text-blue-500">
+    <i class="fas fa-tint mr-2"></i>
+    <span id="water-percentage"></span>
   </div>
 </div>
 
-<!-- Articles Section (Dynamic Content) -->
 <div class="m-5 bg-white rounded-3xl shadow-lg">
   <div class="bg-green-500 text-white rounded-t-3xl px-3 py-2 w-full text-center flex justify-center items-center">
     <i class="fas fa-star text-yellow-300 mr-2"></i> 
@@ -109,7 +110,3 @@ if ($result && mysqli_num_rows($result) > 0) {
 <?php
 require_once './layout/bottom.php';
 ?>
-
-</body>
-
-</html>

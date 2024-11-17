@@ -3,6 +3,7 @@ require_once '../helper/connection.php';
 session_start();
 
 $message = '';
+$message_type = '';
 
 if (isset($_POST['submit'])) {
     $username = $_POST['username'];
@@ -15,69 +16,35 @@ if (isset($_POST['submit'])) {
         $result = $stmt->get_result();
 
         if ($result && $row = $result->fetch_assoc()) {
-            if ($password === $row['password']) {  // Compare passwords (unencrypted, use hash comparison in production)
-                // If linked_id is NULL, set it to 0 for session data
+            if ($password === $row['password']) {
                 $linked_id = is_null($row['linked_id']) ? 0 : $row['linked_id'];
 
-                // Store the user data in the session
+                // Simpan data pengguna di sesi
                 $_SESSION['login'] = [
                     'id' => $row['id'],
                     'username' => $row['username'],
                     'linked_id' => $linked_id
                 ];
-
-                // Redirect based on whether linked_id is 0
                 if ($linked_id === 0) {
-                    $message = "<script>
-                                  Swal.fire({
-                                      icon: 'warning',
-                                      title: 'Link your account',
-                                      text: 'Please link your device to proceed!',
-                                      showConfirmButton: false,
-                                      timer: 1500
-                                  }).then(() => {
-                                      window.location.href = '../connect';
-                                  });
-                                </script>";
+                    $message = "Please link your device to proceed!";
+                    $message_type = 'warning';
                 } else {
-                    // Redirect to dashboard
-                    $message = "<script>
-                                  Swal.fire({
-                                      icon: 'success',
-                                      title: 'Logged In',
-                                      text: 'Welcome Back, " . $username . "!',
-                                      showConfirmButton: false,
-                                      timer: 1500
-                                  }).then(() => {
-                                      window.location.href = '../dashboard';
-                                  });
-                                </script>";
+                    header("Location: ../dashboard");
+                    exit();
                 }
             } else {
-                // Invalid password
-                $message = "<script>
-                              Swal.fire({
-                                  icon: 'error',
-                                  title: 'Invalid username or password.',
-                                  text: 'Please try again!'
-                              });
-                            </script>";
+                $message = "Invalid username or password. Please try again.";
+                $message_type = 'error';
             }
         } else {
-            // No user found
-            $message = "<script>
-                          Swal.fire({
-                              icon: 'error',
-                              title: 'Invalid username or password.',
-                              text: 'Please try again!'
-                          });
-                        </script>";
+            $message = "Invalid username or password. Please try again.";
+            $message_type = 'error';
         }
 
         $stmt->close();
     } else {
-        // Connection to the database failed
         $message = "Database connection failed.";
+        $message_type = 'error';
     }
 }
 ?>
@@ -102,27 +69,36 @@ if (isset($_POST['submit'])) {
       font-style: normal;
     }
   </style>
-
-  <!-- SweetAlert2 CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 
 <body class="flex flex-col h-screen text-center scroll-smooth bg-white">
 
-<div class="m-5 p-4 bg-yellow-400 rounded-3xl shadow-lg text-center flex flex-col justify-center items-center">
-  <div class="flex items-center justify-center">
-    <i class="fas fa-exclamation-triangle text-xl mr-2"></i>
-    <span class="font-bold text-lg">Information</span>
-  </div>
-  <p class="mt-2">
-  Our application is under heavy development. Some features are not yet available and will be added soon. Thank you for your attention.
-  </p>
-</div>
+  <!-- Notification 
+  <div class="m-5 p-4 bg-yellow-400 rounded-3xl shadow-lg text-center flex flex-col justify-center items-center">
+    <div class="flex items-center justify-center">
+      <i class="fas fa-exclamation-triangle text-xl mr-2"></i>
+      <span class="font-bold text-lg">Information</span>
+    </div>
+    <p class="mt-2">
+      Our application is under heavy development. Some features are not yet available and will be added soon. Thank you for your attention.
+    </p>
+  </div> -->
 
-<div class="flex-1 flex flex-col justify-center items-center">
+  <!-- Success or Error Notification -->
+  <?php if ($message): ?>
+    <div class="m-5 p-4 rounded-3xl shadow-lg text-center flex flex-col justify-center items-center 
+                <?= $message_type === 'success' ? 'bg-green-100 border border-green-500 text-green-700' : ($message_type === 'error' ? 'bg-red-100 border border-red-500 text-red-700' : 'bg-yellow-100 border border-yellow-500 text-yellow-700') ?>">
+      <div class="flex items-center justify-center">
+        <i class="fas <?= $message_type === 'success' ? 'fa-check-circle' : ($message_type === 'error' ? 'fa-times-circle' : 'fa-exclamation-circle') ?> text-xl mr-2"></i>
+        <span class="font-bold text-lg"><?= $message_type === 'success' ? 'Success' : ($message_type === 'error' ? 'Error' : 'Warning') ?></span>
+      </div>
+      <p class="mt-2"><?= htmlspecialchars($message) ?></p>
+    </div>
+  <?php endif; ?>
+
+  <div class="flex-1 flex flex-col justify-center items-center">
     <div class="text-center mb-8">
-      <!-- Replace the FontAwesome icon with an image -->
-      <img src="/assets/img/superapp-login-logo-only.png" alt="Botaniq SuperApp Logo" class="w-32 h-32 mx-auto"> <!-- Adjust width and height as needed -->
+      <img src="/assets/img/superapp-login-logo-only.png" alt="Botaniq SuperApp Logo" class="w-32 h-32 mx-auto">
       <div class="mt-3 text-gray-600">
         <span class="font-extrabold text-3xl">Botaniq SuperApp</span>
       </div>
@@ -176,9 +152,6 @@ if (isset($_POST['submit'])) {
     </div>
   </div>
 
-  <!-- SweetAlert2 JS -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <?php if (isset($message)) echo $message; ?>
-
 </body>
+
 </html>
