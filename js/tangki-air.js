@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const waterText = document.getElementById('water-text');
     const weatherContainer = document.getElementById('weather-container');
 
-    const waterLevel = 60;
+    const waterLevel = 86;
 
     const updateWaterTankSize = () => {
         const weatherWidth = weatherContainer.offsetWidth;

@@ -2,7 +2,6 @@
 require_once './helper/auth.php';
 isLogin();
 
-// Get the currently accessed file name
 $page = basename($_SERVER['PHP_SELF'], ".php");
 $headerTitle = "Botaniq SuperApp";
 if ($page === "ai") {
@@ -22,13 +21,8 @@ if ($page === "ai") {
 }
 ?>
 
-<!-- HEADER SECTION -->
 <div class="text-center py-5 mb-5 shadow-md text-gray-600 bg-white">
   <button id="sidebar-toggle" class="absolute left-5 items-center fa fa-user-circle text-gray text-3xl"></button>
-  
-  <!-- Replace FontAwesome icon with custom image -->
-  <img src="/assets/img/superapp-login-logo-only.png" alt="Botaniq SuperApp Logo" class="inline-block w-8 h-8" id="header-icon"> <!-- Adjust width and height as needed -->
-
+  <img src="/assets/img/superapp-login-logo-only.png" alt="Botaniq SuperApp Logo" class="inline-block w-8 h-8" id="header-icon">
   <span class="font-extrabold text-lg ml-1"><?= $headerTitle ?></span>
-  <span class="font-semibold"> v1.0</span>
 </div>

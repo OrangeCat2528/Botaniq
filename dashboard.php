@@ -25,11 +25,10 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 <script src="js/dom.js?v=2"></script>
 <script src="js/data.js?v=11"></script>
-<script src="js/ai-dash.js?v=13"></script>
 <script src="js/notifier.js?v=1"></script>
 <script src="js/cuaca.js?v=5"></script>
-<script src="js/tangki-air.js?v=14"></script>
-<link href="assets/watertank.css?v=9" rel="stylesheet"></link>
+<script src="js/tangki-air.js?v=15"></script>
+<link href="assets/watertank.css?v=11" rel="stylesheet"></link>
 
 <div class="warning-sign m-5 p-4 bg-yellow-400 rounded-3xl shadow-lg text-center flex flex-col justify-center items-center hidden">
   <div class="flex items-center justify-center">
