@@ -11,7 +11,7 @@ require_once './layout/sidebar.php';
     <span class="font-bold text-lg">Warning</span>
   </div>
   <p class="mt-2">
-  AI is undergoing maintenance. Please wait
+  ANJAAAYYYYY
   </p>
 </div>
 
