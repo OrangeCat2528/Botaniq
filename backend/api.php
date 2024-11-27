@@ -2,7 +2,7 @@
 require "../helper/connection.php";
 session_start();
 
-header("Access-Control-Allow-Origin: *"); 
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Accept");
 
@@ -12,25 +12,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    if (!isset($_GET['data'])) {
-        header('Content-Type: application/json', true, 400);
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'Missing required "data" parameter.'
-        ]);
-        exit;
+    $product_id = null;
+    if (isset($_GET['data'])) {
+        if ($_GET['data'] === 'cattleya') {
+            $product_id = 'BBB';
+        } elseif ($_GET['data'] === 'sativa') {
+            $product_id = 'AAA';
+        } else {
+            header('Content-Type: application/json', true, 400);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Invalid "data" parameter. Valid values are "cattleya" and "sativa".'
+            ]);
+            exit;
+        }
+    } elseif (isset($_GET['product_id'])) {
+        $product_id = $_GET['product_id'];
     }
 
-    $product_id = null;
-    if ($_GET['data'] === 'cattleya') {
-        $product_id = 'BBB'; 
-    } elseif ($_GET['data'] === 'sativa') {
-        $product_id = 'AAA';
-    } else {
+    if ($product_id === null) {
         header('Content-Type: application/json', true, 400);
         echo json_encode([
             'status' => 'error',
-            'message' => 'Invalid "data" parameter. Valid values are "cattleya" and "sativa".'
+            'message' => 'Missing required "data" or "product_id" parameter.'
         ]);
         exit;
     }
@@ -42,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $stmt->bind_param("si", $product_id, $range);
         $stmt->execute();
         $result = $stmt->get_result();
+        
         $data = [];
         while ($row = $result->fetch_assoc()) {
             $data[] = $row;
