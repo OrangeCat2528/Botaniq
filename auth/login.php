@@ -8,27 +8,23 @@ $message_type = '';
 if (isset($_POST['submit'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
-    $username = htmlspecialchars($username);
-    $password = htmlspecialchars($password);
 
     if ($connection) {
-        $stmt = $connection->prepare("SELECT id, username, password, linked_id FROM users WHERE username = ? LIMIT 1");
+        $stmt = $connection->prepare("SELECT * FROM users WHERE username = ? LIMIT 1");
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result && $row = $result->fetch_assoc()) {
-            if (password_verify($password, $row['password'])) {
+            if ($password === $row['password']) {
                 $linked_id = is_null($row['linked_id']) ? 0 : $row['linked_id'];
-                session_regenerate_id(true);
 
-                // Store user data in session securely
+                // Simpan data pengguna di sesi
                 $_SESSION['login'] = [
                     'id' => $row['id'],
                     'username' => $row['username'],
                     'linked_id' => $linked_id
                 ];
-
                 if ($linked_id === 0) {
                     $message = "Please link your device to proceed!";
                     $message_type = 'warning';
@@ -50,15 +46,6 @@ if (isset($_POST['submit'])) {
         $message = "Database connection failed.";
         $message_type = 'error';
     }
-}
-
-if (!isset($_SESSION['failed_attempts'])) {
-    $_SESSION['failed_attempts'] = 0;
-}
-
-if ($_SESSION['failed_attempts'] > 5) {
-    $message = "Too many failed login attempts. Please try again later.";
-    $message_type = 'error';
 }
 ?>
 
@@ -85,6 +72,17 @@ if ($_SESSION['failed_attempts'] > 5) {
 </head>
 
 <body class="flex flex-col h-screen text-center scroll-smooth bg-white">
+
+  <!-- Notification 
+  <div class="m-5 p-4 bg-yellow-400 rounded-3xl shadow-lg text-center flex flex-col justify-center items-center">
+    <div class="flex items-center justify-center">
+      <i class="fas fa-exclamation-triangle text-xl mr-2"></i>
+      <span class="font-bold text-lg">Information</span>
+    </div>
+    <p class="mt-2">
+      Our application is under heavy development. Some features are not yet available and will be added soon. Thank you for your attention.
+    </p>
+  </div> -->
 
   <!-- Success or Error Notification -->
   <?php if ($message): ?>
