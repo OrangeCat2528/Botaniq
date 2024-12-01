@@ -15,33 +15,32 @@ require_once './layout/sidebar.php';
   </p>
 </div>
 
-<!-- Gambar Section menggantikan Camera View -->
-<div class="shadow-lg rounded-3xl max-w-xs mx-auto overflow-hidden">
-  <!-- Canvas Section to show the uploaded image -->
-  <div id="image-container" class="w-full h-40 mx-auto rounded-t-3xl overflow-hidden bg-gray-300 relative flex justify-center items-center text-gray-600 font-bold cursor-pointer" onclick="openFileDialog()">
-    <span id="no-image-text">Click to Upload</span> <!-- Default text when no image is selected -->
-  </div>
+<!-- Upload Container -->
+<div class="m-5">
+  <div class="shadow-lg rounded-3xl max-w-xs mx-auto overflow-hidden">
+    <!-- Canvas Section -->
+    <div id="image-container" class="w-full h-40 rounded-t-3xl overflow-hidden bg-gray-300 relative flex justify-center items-center text-gray-600 font-bold cursor-pointer" onclick="openFileDialog()">
+      <span id="no-image-text">Click to Upload</span>
+    </div>
 
-  <!-- Upload Section (hidden by default) -->
-  <div class="p-4" id="upload-section" style="display: none;">
-    <div class="flex items-center justify-between sm:justify-start sm:space-x-4 space-x-2">
-      <!-- Send to AI Button with Robot Icon -->
-      <button class="flex items-center bg-blue-500 text-white font-bold py-3 px-6 rounded-3xl cursor-pointer">
-        <i class="fas fa-robot mr-2"></i> Send to AI
-      </button>
+    <!-- Upload Section -->
+    <div class="p-4" id="upload-section" style="display: none;">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <!-- Send to AI Button -->
+        <button class="flex items-center bg-blue-500 text-white font-bold py-2 px-4 rounded-3xl cursor-pointer hover:bg-blue-600 transition-colors">
+          <i class="fas fa-robot mr-2"></i> Send to AI
+        </button>
 
-      <!-- Stylish Checkbox for AI Model -->
-      <div class="flex items-center space-x-2">
-        <label for="ai-checkbox" class="flex items-center text-sm text-gray-600 cursor-pointer">
-          <!-- Checkbox Input -->
-          <input id="ai-checkbox" type="checkbox" class="hidden" onchange="toggleCheckbox(this)" />
-          <!-- Custom Styled Checkbox -->
-          <div class="w-6 h-6 border-2 border-gray-500 rounded-lg flex justify-center items-center mr-2 relative">
-            <!-- Check Icon -->
-            <div class="absolute w-3 h-3 bg-green-500 rounded-full hidden" id="check-icon"></div>
-          </div>
-          <span class="text-sm">Sent Data</span> <!-- Changed text here -->
-        </label>
+        <!-- Checkbox -->
+        <div class="flex items-center">
+          <label for="ai-checkbox" class="flex items-center text-sm text-gray-600 cursor-pointer">
+            <input id="ai-checkbox" type="checkbox" class="hidden" onchange="toggleCheckbox(this)" />
+            <div class="w-6 h-6 border-2 border-gray-500 rounded-lg flex justify-center items-center mr-2 relative">
+              <div class="absolute w-3 h-3 bg-green-500 rounded-full hidden" id="check-icon"></div>
+            </div>
+            <span class="text-sm">Sent Data</span>
+          </label>
+        </div>
       </div>
     </div>
   </div>
