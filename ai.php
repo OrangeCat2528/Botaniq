@@ -70,106 +70,116 @@ function handleImageUploadFromModal(event) {
     const sendButton = document.querySelector('button.bg-blue-500');
 
     if (file) {
-        // Disable send button during upload
-        sendButton.disabled = true;
-        sendButton.classList.remove('bg-blue-500', 'hover:bg-blue-600');
-        sendButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+        // Tampilkan preview image terlebih dahulu
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.src = e.target.result;
 
-        // Create percentage overlay
-        const percentageOverlay = document.createElement('div');
-        percentageOverlay.className = 'absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white text-2xl font-bold z-10';
-        percentageOverlay.id = 'upload-percentage';
-        percentageOverlay.textContent = '0%';
-        imageContainer.appendChild(percentageOverlay);
+            img.onload = function() {
+                // Clear container dan set background
+                imageContainer.innerHTML = '';
+                imageContainer.style.backgroundColor = 'transparent';
 
-        // Create FormData and upload
-        const formData = new FormData();
-        formData.append('file', file);
+                // Append image
+                imageContainer.appendChild(img);
 
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/backend/upload.php', true);
+                // Style image
+                img.style.position = 'absolute';
+                img.style.top = '50%';
+                img.style.left = '50%';
+                img.style.transform = 'translate(-50%, -50%)';
+                img.style.objectFit = 'cover';
+                img.style.width = '100%';
+                img.style.height = '100%';
 
-        xhr.upload.onprogress = function(e) {
-            if (e.lengthComputable) {
-                const percentage = Math.round((e.loaded * 100) / e.total);
-                document.getElementById('upload-percentage').textContent = percentage + '%';
-            }
+                // Show upload section
+                document.getElementById('upload-section').style.display = 'block';
+
+                // Mulai proses upload
+                startUpload(file, imageContainer, sendButton);
+            };
         };
-
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                const response = JSON.parse(xhr.responseText);
-                if (response.status === 'success') {
-                    // Remove percentage overlay
-                    document.getElementById('upload-percentage').remove();
-
-                    // Enable send button
-                    sendButton.disabled = false;
-                    sendButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
-                    sendButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
-
-                    // Display image
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = new Image();
-                        img.src = e.target.result;
-
-                        img.onload = function() {
-                            imageContainer.innerHTML = '';
-                            imageContainer.style.backgroundColor = 'transparent';
-                            imageContainer.appendChild(img);
-
-                            img.style.position = 'absolute';
-                            img.style.top = '50%';
-                            img.style.left = '50%';
-                            img.style.transform = 'translate(-50%, -50%)';
-                            img.style.objectFit = 'cover';
-                            img.style.width = '100%';
-                            img.style.height = '100%';
-
-                            document.getElementById('upload-section').style.display = 'block';
-                            document.getElementById('ai-checkbox').checked = true;
-                            toggleCheckbox(document.getElementById('ai-checkbox'));
-                        };
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    alert('Upload failed: ' + response.message);
-                    // Reset upload state
-                    document.getElementById('upload-percentage').remove();
-                    sendButton.disabled = false;
-                    sendButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
-                    sendButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
-                }
-            }
-        };
-
-        xhr.onerror = function() {
-            alert('Upload failed. Please try again.');
-            // Reset upload state
-            document.getElementById('upload-percentage').remove();
-            sendButton.disabled = false;
-            sendButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
-            sendButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
-        };
-
-        // Start upload
-        xhr.send(formData);
-
+        reader.readAsDataURL(file);
     } else {
-        // Reset to default state when no file is chosen
         imageContainer.innerHTML = '<span id="no-image-text" class="text-gray-600 font-bold">Click to Upload</span>';
         imageContainer.style.backgroundColor = '#e0e0e0';
-        
-        // Hide upload section
         document.getElementById('upload-section').style.display = 'none';
     }
 
-    // Close the file dialog modal after image is selected
     closeFileDialog();
 }
 
-// Fungsi lainnya tetap sama
+function startUpload(file, imageContainer, sendButton) {
+    // Disable send button
+    sendButton.disabled = true;
+    sendButton.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+    sendButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+
+    // Create percentage overlay
+    const percentageOverlay = document.createElement('div');
+    percentageOverlay.className = 'absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white text-2xl font-bold z-10';
+    percentageOverlay.id = 'upload-percentage';
+    percentageOverlay.textContent = '0%';
+    imageContainer.appendChild(percentageOverlay);
+
+    // Create FormData and upload
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://botaniq.cogarden.app/backend/upload.php', true);
+
+    xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+            const percentage = Math.round((e.loaded * 100) / e.total);
+            document.getElementById('upload-percentage').textContent = percentage + '%';
+        }
+    };
+
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            if (response.status === 'success') {
+                // Remove percentage overlay
+                document.getElementById('upload-percentage').remove();
+
+                // Enable send button
+                sendButton.disabled = false;
+                sendButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                sendButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
+
+                // Check the checkbox
+                document.getElementById('ai-checkbox').checked = true;
+                toggleCheckbox(document.getElementById('ai-checkbox'));
+            } else {
+                alert('Upload failed: ' + response.message);
+                resetUploadState(percentageOverlay, sendButton);
+            }
+        }
+    };
+
+    xhr.onerror = function() {
+        alert('Upload failed. Please try again.');
+        resetUploadState(percentageOverlay, sendButton);
+    };
+
+    xhr.send(formData);
+}
+
+function resetUploadState(percentageOverlay, sendButton) {
+    // Remove percentage overlay
+    if (document.getElementById('upload-percentage')) {
+        document.getElementById('upload-percentage').remove();
+    }
+
+    // Enable send button
+    sendButton.disabled = false;
+    sendButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+    sendButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
+}
+
+// Fungsi-fungsi lainnya tetap sama
 function openFileDialog() {
     document.getElementById('file-upload-modal').style.display = 'flex';
 }
