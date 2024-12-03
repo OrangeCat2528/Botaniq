@@ -1,6 +1,5 @@
 <?php
 require_once './layout/top.php';
-// require_once '../helper/connection.php';
 require_once './layout/header.php';
 require_once './layout/sidebar.php';
 ?>
@@ -27,7 +26,7 @@ require_once './layout/sidebar.php';
     <div class="p-4" id="upload-section" style="display: none;">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <!-- Send to AI Button -->
-        <button class="flex items-center bg-blue-500 text-white font-bold py-2 px-4 rounded-3xl cursor-pointer hover:bg-blue-600 transition-colors">
+        <button id="send-to-ai-btn" class="flex items-center bg-blue-500 text-white font-bold py-2 px-4 rounded-3xl cursor-pointer hover:bg-blue-600 transition-colors" onclick="uploadImage()" disabled>
           <i class="fas fa-robot mr-2"></i> Send to AI
         </button>
 
@@ -63,13 +62,17 @@ require_once './layout/sidebar.php';
 </div>
 
 <script>
-  // Handle the image upload from modal
+  let fileToUpload = null;
+
   function handleImageUploadFromModal(event) {
     const file = event.target.files[0];
     const imageContainer = document.getElementById('image-container');
     const noImageText = document.getElementById('no-image-text');
+    const uploadSection = document.getElementById('upload-section');
+    const sendToAIButton = document.getElementById('send-to-ai-btn');
 
     if (file) {
+      fileToUpload = file;
       const reader = new FileReader();
 
       reader.onload = function(e) {
@@ -77,56 +80,39 @@ require_once './layout/sidebar.php';
         img.src = e.target.result;
 
         img.onload = function() {
-          // Clear previous text and set the background to white when an image is loaded
           imageContainer.innerHTML = ''; // Remove the "No Image Selected" text
           imageContainer.style.backgroundColor = 'transparent'; // Remove gray background
 
-          // Append the new image
           imageContainer.appendChild(img);
-
-          // Set the image to fit within the smaller container size
           img.style.position = 'absolute';
           img.style.top = '50%';
           img.style.left = '50%';
           img.style.transform = 'translate(-50%, -50%)';
-
-          // Apply objectFit 'cover' to make sure the image fills the container but may be cropped
-          img.style.objectFit = 'cover';  // Image will cover the container and may be cropped
-
-          // Ensure the image fits within the container (this is the preview size)
+          img.style.objectFit = 'cover';
           img.style.width = '100%';
-          img.style.height = '100%' ;
+          img.style.height = '100%';
 
-          // Show the "Send to AI" section after image is selected
-          document.getElementById('upload-section').style.display = 'block';
-
-          // Auto upload image and enable checkbox
-          document.getElementById('ai-checkbox').checked = true;
+          uploadSection.style.display = 'block';
         };
       };
 
       reader.readAsDataURL(file);
     } else {
-      // Reset to "No Image Selected" when no file is chosen
       imageContainer.innerHTML = '<span id="no-image-text" class="text-gray-600 font-bold">Click to Upload</span>';
-      imageContainer.style.backgroundColor = '#e0e0e0'; // Gray background when no image is selected
+      imageContainer.style.backgroundColor = '#e0e0e0';
     }
 
-    // Close the file dialog modal after image is selected
     closeFileDialog();
   }
 
-  // Open the file dialog modal
   function openFileDialog() {
     document.getElementById('file-upload-modal').style.display = 'flex';
   }
 
-  // Close the file dialog modal
   function closeFileDialog() {
     document.getElementById('file-upload-modal').style.display = 'none';
   }
 
-  // Toggle the checkbox and show/hide check icon
   function toggleCheckbox(checkbox) {
     const checkIcon = document.getElementById('check-icon');
     if (checkbox.checked) {
@@ -134,6 +120,49 @@ require_once './layout/sidebar.php';
     } else {
       checkIcon.classList.add('hidden');
     }
+  }
+
+  function uploadImage() {
+    const formData = new FormData();
+    formData.append('file', fileToUpload);
+
+    const uploadProgressText = document.createElement('span');
+    uploadProgressText.classList.add('absolute', 'top-0', 'left-0', 'w-full', 'text-white', 'font-bold');
+    uploadProgressText.id = 'upload-progress-text';
+    uploadProgressText.innerText = 'Uploading: 0%';
+    document.getElementById('image-container').appendChild(uploadProgressText);
+
+    const sendToAIButton = document.getElementById('send-to-ai-btn');
+    sendToAIButton.disabled = true;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/backend/upload.php', true);
+
+    xhr.upload.onprogress = function(e) {
+      if (e.lengthComputable) {
+        const percentage = Math.round((e.loaded / e.total) * 100);
+        uploadProgressText.innerText = 'Uploading: ' + percentage + '%';
+      }
+    };
+
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        if (response.status === 'success') {
+          uploadProgressText.innerText = 'Upload Complete';
+          setTimeout(() => {
+            uploadProgressText.remove();
+            sendToAIButton.disabled = false;
+            sendToAIButton.classList.remove('bg-gray-500');
+            sendToAIButton.classList.add('bg-blue-500');
+          }, 2000);
+        } else {
+          uploadProgressText.innerText = 'Upload Failed';
+        }
+      }
+    };
+
+    xhr.send(formData);
   }
 </script>
 
