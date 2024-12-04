@@ -128,7 +128,7 @@ function startUpload(file, imageContainer, sendButton) {
     formData.append('file', file);
 
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://botaniq.cogarden.app/backend/upload.php', true);
+    xhr.open('POST', 'https://botaniq.cogarden.app/uploads/upload.php', true);
 
     xhr.upload.onprogress = function(e) {
         if (e.lengthComputable) {
