@@ -128,19 +128,19 @@ function startUpload(file, imageContainer, sendButton) {
     formData.append('file', file);
 
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://botaniq.cogarden.app/uploads/upload.php', true);
+    xhr.open('POST', 'https://upload.botaniq.cogarden.app/upload', true);
 
-    xhr.upload.onprogress = function(e) {
+    xhr.upload.onprogress = function (e) {
         if (e.lengthComputable) {
             const percentage = Math.round((e.loaded * 100) / e.total);
             document.getElementById('upload-percentage').textContent = percentage + '%';
         }
     };
 
-    xhr.onload = function() {
+    xhr.onload = function () {
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
-            if (response.status === 'success') {
+            if (response && response.link) {
                 // Remove percentage overlay
                 document.getElementById('upload-percentage').remove();
 
@@ -149,17 +149,22 @@ function startUpload(file, imageContainer, sendButton) {
                 sendButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
                 sendButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
 
-                // Check the checkbox
-                document.getElementById('ai-checkbox').checked = true;
-                toggleCheckbox(document.getElementById('ai-checkbox'));
+                // Show success message or further actions
+                alert('Upload successful: ' + response.link);
+
+                // Optionally, display the uploaded image's URL
+                console.log('Uploaded file URL:', response.link);
             } else {
-                alert('Upload failed: ' + response.message);
+                alert('Upload failed: ' + (response.message || 'Unknown error.'));
                 resetUploadState(percentageOverlay, sendButton);
             }
+        } else {
+            alert('Upload failed with status code ' + xhr.status);
+            resetUploadState(percentageOverlay, sendButton);
         }
     };
 
-    xhr.onerror = function() {
+    xhr.onerror = function () {
         alert('Upload failed. Please try again.');
         resetUploadState(percentageOverlay, sendButton);
     };
