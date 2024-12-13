@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const waterText = document.getElementById('water-text');
     const weatherContainer = document.getElementById('weather-container');
 
-    const waterLevel = 86;
+    let waterLevel = 0;
 
     const updateWaterTankSize = () => {
         const weatherWidth = weatherContainer.offsetWidth;
@@ -35,6 +35,23 @@ document.addEventListener('DOMContentLoaded', () => {
             waterText.classList.replace('text-white', 'text-blue-500');
         }
     };
-    updateWaterTankSize();
+
+    const fetchWaterTankData = () => {
+        fetch('https://botaniq.cogarden.app/backend/load_data.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.watertank !== undefined) {
+                    waterLevel = parseInt(data.watertank, 10) || 0;
+                    updateWaterTankSize();
+                } else {
+                    console.error('Watertank data not found in the response:', data);
+                }
+            })
+            .catch(error => console.error('Error fetching watertank data:', error));
+    };
+
+    fetchWaterTankData(); // Initial fetch
+    setInterval(fetchWaterTankData, 5000); // Refresh data every 5 seconds
+
     window.addEventListener('resize', updateWaterTankSize);
 });

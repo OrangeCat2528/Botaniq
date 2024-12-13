@@ -57,7 +57,6 @@ require_once './layout/sidebar.php';
   </div>
 </div>
 
-<!-- Dotted Area -->
 <div id="dotted-area" class="lg:mx-auto lg:w-1/2 mb-44 m-5 p-5 rounded-3xl border-4 border-dotted border-gray-500" style="display: none;">
   <!-- Konten akan diisi dari API -->
 </div>
