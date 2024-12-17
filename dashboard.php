@@ -111,7 +111,7 @@ require_once './layout/bottom.php';
 ?>
 
 <script>
-  document.getElementById("water-tank-container").addEventListener("click", function () {
+  document.getElementById("water-text").addEventListener("click", function () {
     fetch("https://botaniq.cogarden.app/backend/load_data.php")
       .then(response => response.json())
       .then(data => {
