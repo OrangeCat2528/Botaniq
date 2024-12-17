@@ -109,3 +109,89 @@ if ($result && mysqli_num_rows($result) > 0) {
 <?php
 require_once './layout/bottom.php';
 ?>
+
+<script>
+  document.getElementById("water-tank-container").addEventListener("click", function () {
+    fetch("https://botaniq.cogarden.app/backend/load_data.php")
+      .then(response => response.json())
+      .then(data => {
+        const { watertank, soil } = data;
+
+        // Tentukan pesan modal berdasarkan kondisi
+        let modalMessage = "Are you sure to Activate Watering System?";
+        if (watertank < 25) {
+          modalMessage = "Your Water Tank is below the Recommended Percentage (25%). Do you want to keep Watering Enabled?";
+        } else if (soil > 65) {
+          modalMessage = "The pot soil moisture is in good condition, do you still want to activate watering?";
+        }
+
+        // Buat modal
+        const modalContent = `
+          <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div class="bg-white rounded-3xl shadow-lg p-6 w-11/12 max-w-lg">
+              <div class="flex flex-col justify-center items-center">
+                <div class="text-orange-500 text-3xl mb-3">
+                  <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <p class="text-gray-700 text-center font-bold text-sm md:text-base mb-4">${modalMessage}</p>
+                <button id="activate-watering" class="bg-green-500 text-white font-bold px-4 py-2 rounded-lg w-full transition duration-300 hover:bg-green-600">
+                  Activate Watering
+                </button>
+                <div id="progress-bar" class="mt-3 w-full h-2 bg-gray-200 rounded hidden">
+                  <div class="h-2 bg-green-500 rounded" style="width: 0%"></div>
+                </div>
+                <button id="stop-watering" class="bg-red-500 text-white font-bold px-4 py-2 rounded-lg w-full mt-3 transition duration-300 hover:bg-red-600 hidden">
+                  Stop Watering
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Tambahkan modal ke DOM
+        const modal = document.createElement("div");
+        modal.id = "popup-modal";
+        modal.innerHTML = modalContent;
+        document.body.appendChild(modal);
+
+        // Logika tombol "Activate Watering"
+        document.getElementById("activate-watering").addEventListener("click", function () {
+          const progressBar = document.getElementById("progress-bar");
+          const progress = progressBar.querySelector("div");
+          const stopButton = document.getElementById("stop-watering");
+
+          // Tampilkan progress bar
+          progressBar.classList.remove("hidden");
+          let width = 0;
+
+          const interval = setInterval(() => {
+            width += 10;
+            progress.style.width = `${width}%`;
+
+            if (width >= 100) {
+              clearInterval(interval);
+              progressBar.classList.add("hidden");
+              this.classList.add("bg-gray-400", "cursor-not-allowed");
+              this.disabled = true;
+              stopButton.classList.remove("hidden");
+            }
+          }, 300);
+        });
+
+        // Logika tombol "Stop Watering"
+        document.getElementById("stop-watering").addEventListener("click", function () {
+          modal.remove();
+        });
+
+        // Tutup modal jika klik di luar konten
+        modal.addEventListener("click", function (e) {
+          if (e.target === modal) {
+            modal.remove();
+          }
+        });
+      })
+      .catch(error => {
+        console.error("Error fetching water tank data:", error);
+      });
+  });
+</script>
