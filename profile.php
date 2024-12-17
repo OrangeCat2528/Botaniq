@@ -79,7 +79,7 @@ require_once './layout/sidebar.php';
 </div>
 
 <!-- Change Password Modal -->
-<div id="changePassModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+<div id="changePassModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden z-50">
     <div class="bg-white w-80 p-6 rounded-lg shadow-lg">
         <h2 class="text-lg font-bold mb-4">Change Password</h2>
         <form id="changePassForm" action="auth/change-password.php" method="POST">
