@@ -28,7 +28,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 <script src="js/notifier.js?v=1"></script>
 <script src="js/cuaca.js?v=5"></script>
 <script src="js/tangki-air.js?v=17"></script>
-<script src="js/watertank-controller.js?v=1"></script>
+<script src="js/watertank-controller.js?v=2"></script>
 <link href="assets/watertank.css?v=11" rel="stylesheet"></link>
 
 <div class="warning-sign m-5 p-4 bg-yellow-400 rounded-3xl shadow-lg text-center flex flex-col justify-center items-center hidden">
