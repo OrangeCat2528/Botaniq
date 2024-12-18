@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
             loadingIcon.classList.remove("hidden");
             activateText.textContent = "Loading...";
   
-            fetch("http://100.100.1.5:2000/watertank&status=1")
+            fetch("https://ayep.cogarden.app/watertank?status=1") // i love yepa langsung bisa anjir
               .then(response => {
                 if (!response.ok) {
                   throw new Error("Failed to activate watering");
