@@ -40,36 +40,34 @@ document.addEventListener("DOMContentLoaded", () => {
           });
   
           document.getElementById("activate-watering").addEventListener("click", function () {
-            const loadingIcon = document.getElementById("loading-icon");
             const activateText = document.getElementById("activate-text");
+            const loadingIcon = document.getElementById("loading-icon");
             const progressBar = document.getElementById("progress-bar");
             const progress = progressBar.querySelector("div");
   
+            // Langsung tampilkan progress bar
+            progressBar.classList.remove("hidden");
             loadingIcon.classList.remove("hidden");
             activateText.textContent = "Loading...";
   
-            fetch("https://ayep.cogarden.app/watertank?status=1")
-              .catch(() => {
-                console.warn("Error fetching watering API, continuing anyway...");
-              })
-              .finally(() => {
-                loadingIcon.classList.add("hidden");
+            // Jalankan progress bar tanpa menunggu API response
+            let width = 0;
+            const interval = setInterval(() => {
+              width += 10;
+              progress.style.width = `${width}%`;
+  
+              if (width >= 100) {
+                clearInterval(interval);
+                progressBar.classList.add("hidden");
                 activateText.textContent = "Activate Watering";
-                progressBar.classList.remove("hidden");
-                let width = 0;
+                loadingIcon.classList.add("hidden");
+              }
+            }, 300);
   
-                const interval = setInterval(() => {
-                  width += 10;
-                  progress.style.width = `${width}%`;
-  
-                  if (width >= 100) {
-                    clearInterval(interval);
-                    progressBar.classList.add("hidden");
-                    this.classList.add("bg-gray-400", "cursor-not-allowed");
-                    this.disabled = true;
-                  }
-                }, 300);
-              });
+            // Fetch API tetap dijalankan di background
+            fetch("https://ayep.cogarden.app/watertank?status=1").catch(() => {
+              console.warn("Error fetching watering API, ignoring error...");
+            });
           });
   
           modal.addEventListener("click", function (e) {
@@ -83,4 +81,3 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
   });
-  
