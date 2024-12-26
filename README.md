@@ -20,8 +20,8 @@
 ## 🎉 Awards and Achievements
 - 🥈 **Silver Medal** WSEEC (World Science, Environment and Engineering Competition)
 - 🥇 **Gold Medal** I3O (Indonesia International IoT Olympiad) at Diponegoro University
-- 🏆 **Best Group Award** - World Youth Festival 2024 handled by Youth Breaks the Boundaries 
-- 🏆 **First Place** - World Youth Festival 2024 handled by Youth Breaks the Boundaries
+- 🏆 **Best Group Award** - World Youth Festival 2024 handled by Youth Breaks the Boundaries [Click Here](https://youthbreaktheboundaries.com/botaniq-wins-best-group-world-youth-festival-2024/)
+- 🏆 **First Place** - World Youth Festival 2024 handled by Youth Breaks the Boundaries [Click Here](https://youthbreaktheboundaries.com/botaniq-wins-best-group-world-youth-festival-2024/)
 - 🥇 **Gold Medal** - I2ASPO (Indonesia International Applied Science Project Olympiad) at Sepuluh Nopember Institute of Technology
 - 🥇 **Top 1** in East Java at the LPDP Business Competition
 
