@@ -23,6 +23,7 @@
 - 🏆 **Best Group Award** - World Youth Festival 2024 handled by Youth Breaks the Boundaries 
 - 🏆 **First Place** - World Youth Festival 2024 handled by Youth Breaks the Boundaries
 - 🥇 **Gold Medal** - I2ASPO (Indonesia International Applied Science Project Olympiad) at Sepuluh Nopember Institute of Technology
+- 🥇 **Top 1** in East Java at the LPDP Business Competition
 
 ---
 
