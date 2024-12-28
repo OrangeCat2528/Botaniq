@@ -1,5 +1,12 @@
 <?php
-define('ENCRYPTION_KEY', 'DB8u25EUQfuvf4yp');
+require __DIR__ . '/../vendor/autoload.php';
+
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+define('ENCRYPTION_KEY', $_ENV['ENCRYPT_DATA']);
 
 function encryptToken($data)
 {
