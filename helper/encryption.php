@@ -1,7 +1,13 @@
 <?php
-define('ENCRYPTION_KEY', 'DB8u25EUQfuvf4yp');
+require_once __DIR__ . '/../vendor/autoload.php';
 
-// Fungsi untuk mengenkripsi data
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+define('ENCRYPTION_KEY', $_ENV['ENCRYPT_DATA']);
+
 function encryptToken($data)
 {
     $iv = random_bytes(16);

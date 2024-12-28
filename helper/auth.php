@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once 'connection.php';
-require_once 'ncryption.php';
+require_once 'encryption.php';
 
 // Cek apakah user sudah login
 if (!isset($_SESSION['login'])) {

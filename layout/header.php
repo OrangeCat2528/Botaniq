@@ -3,7 +3,6 @@ session_start();
 function isLogin()
 {
     if (!isset($_SESSION['login'])) {
-        // Redirect to  page if the user is not logged in
         header('Location: ../auth/login.php');
         exit();
     }
