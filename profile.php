@@ -14,53 +14,47 @@ require_once './layout/sidebar.php';
     <!-- User Info Section (Reduced Margin) -->
     <div class="text-center mb-4">
         <h2 class="text-lg font-bold text-gray-700"><?= $_SESSION['login']['username'] ?></h2>
-        <p class="text-sm text-gray-500">Prototyper</p>
+        <p class="text-sm text-gray-500">User</p>
     </div>
 
     <!-- Action Buttons (Styled with Blue and Green) -->
     <div class="flex space-x-2 mb-6">
-        <a href="edit-profile.php" class="bg-blue-500 text-white font-semibold py-1 px-4 rounded-full hover:bg-blue-600 transition duration-200 shadow-sm text-sm flex items-center">
+        <button data-feature-not-ready class="bg-blue-500 text-white font-semibold py-1 px-4 rounded-full hover:bg-blue-600 transition duration-200 shadow-sm text-sm flex items-center">
             <i class="fas fa-user-edit mr-1"></i> Edit Profile
-        </a>
+        </button>
         <button id="openChangePassModal" class="bg-green-500 text-white font-semibold py-1 px-4 rounded-full hover:bg-green-600 transition duration-200 shadow-sm text-sm flex items-center">
             <i class="fas fa-key mr-1"></i> Change Pass
         </button>
     </div>
 
-    <!-- Devices List Button -->
+    <!-- Feature Not Ready Buttons -->
     <div class="flex justify-center mt-4 w-full px-4">
-        <button class="bg-white text-gray-700 font-semibold py-3 w-full max-w-md rounded-2xl flex justify-between items-center shadow-lg hover:shadow-xl transition duration-200 px-6">
+        <button data-feature-not-ready class="bg-white text-gray-700 font-semibold py-3 w-full max-w-md rounded-2xl flex justify-between items-center shadow-lg hover:shadow-xl transition duration-200 px-6">
             <span>Devices List</span>
             <i class="fas fa-chevron-right"></i>
         </button>
     </div>
-
-    <!-- Devices List Button -->
     <div class="flex justify-center mt-4 w-full px-4">
-        <button class="bg-white text-gray-700 font-semibold py-3 w-full max-w-md rounded-2xl flex justify-between items-center shadow-lg hover:shadow-xl transition duration-200 px-6">
+        <button data-feature-not-ready class="bg-white text-gray-700 font-semibold py-3 w-full max-w-md rounded-2xl flex justify-between items-center shadow-lg hover:shadow-xl transition duration-200 px-6">
             <span>Manual Watering</span>
             <i class="fas fa-chevron-right"></i>
         </button>
     </div>
-
-    <!-- Devices List Button -->
     <div class="flex justify-center mt-4 w-full px-4">
-        <button class="bg-white text-gray-700 font-semibold py-3 w-full max-w-md rounded-2xl flex justify-between items-center shadow-lg hover:shadow-xl transition duration-200 px-6">
+        <button data-feature-not-ready class="bg-white text-gray-700 font-semibold py-3 w-full max-w-md rounded-2xl flex justify-between items-center shadow-lg hover:shadow-xl transition duration-200 px-6">
             <span>AI Configuration</span>
             <i class="fas fa-chevron-right"></i>
         </button>
     </div>
-    <!-- Devices List Button -->
     <div class="flex justify-center mt-4 w-full px-4">
-        <button class="bg-white text-gray-700 font-semibold py-3 w-full max-w-md rounded-2xl flex justify-between items-center shadow-lg hover:shadow-xl transition duration-200 px-6">
+        <button data-feature-not-ready class="bg-white text-gray-700 font-semibold py-3 w-full max-w-md rounded-2xl flex justify-between items-center shadow-lg hover:shadow-xl transition duration-200 px-6">
             <span>Customer Support</span>
             <i class="fas fa-chevron-right"></i>
         </button>
     </div>
-    <!-- Devices List Button -->
     <div class="flex justify-center mt-4 w-full px-4">
-        <button class="bg-white text-gray-700 font-semibold py-3 w-full max-w-md rounded-2xl flex justify-between items-center shadow-lg hover:shadow-xl transition duration-200 px-6">
-            <span>Request an Replacement</span>
+        <button data-feature-not-ready class="bg-white text-gray-700 font-semibold py-3 w-full max-w-md rounded-2xl flex justify-between items-center shadow-lg hover:shadow-xl transition duration-200 px-6">
+            <span>Request a Replacement</span>
             <i class="fas fa-chevron-right"></i>
         </button>
     </div>
@@ -79,8 +73,8 @@ require_once './layout/sidebar.php';
 </div>
 
 <!-- Change Password Modal -->
-<div id="changePassModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden z-50">
-    <div class="bg-white w-80 p-6 rounded-lg shadow-lg">
+<div id="changePassModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden z-50 transition duration-300">
+    <div class="bg-white w-80 p-6 rounded-lg shadow-lg scale-90 transform transition duration-300 opacity-0" id="changePassContent">
         <h2 class="text-lg font-bold mb-4">Change Password</h2>
         <form id="changePassForm" action="auth/change-password.php" method="POST">
             <div class="mb-3">
@@ -100,66 +94,63 @@ require_once './layout/sidebar.php';
     </div>
 </div>
 
-<div class="invisible h-5"></div>
-
-<?php
-require_once './layout/bottom.php';
-?>
-
-<style>
-    /* Modal Style */
-    #changePassModal .scale-90 {
-        transform: scale(0.9);
-        opacity: 0;
-    }
-
-    #changePassModal.show .scale-90 {
-        transform: scale(1);
-        opacity: 1;
-    }
-</style>
+<!-- Feature Not Ready Modal -->
+<div id="popup-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+    <div class="bg-white rounded-3xl shadow-lg p-6 w-11/12 max-w-lg relative">
+        <button id="close-feature-modal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times text-lg"></i>
+        </button>
+        <div class="text-orange-500 text-3xl mb-3 flex justify-center">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <p class="text-gray-700 text-center font-bold text-sm md:text-base mb-4">This Feature is not yet Done, Stay Tuned!</p>
+        <button class="bg-green-500 text-white font-bold px-4 py-2 rounded-lg w-full flex items-center justify-center gap-2 transition duration-300 hover:bg-green-600">
+            <span>OK</span>
+        </button>
+    </div>
+</div>
 
 <script>
-    // JavaScript for Change Password Modal
     document.addEventListener('DOMContentLoaded', () => {
+        // Change Password Modal
         const openChangePassModal = document.getElementById('openChangePassModal');
         const changePassModal = document.getElementById('changePassModal');
+        const changePassContent = document.getElementById('changePassContent');
         const cancelChangePass = document.getElementById('cancelChangePass');
         const changePassForm = document.getElementById('changePassForm');
         const oldPasswordInput = document.getElementById('oldPassword');
         const oldPasswordError = document.getElementById('oldPasswordError');
 
-        // Show modal
         openChangePassModal.addEventListener('click', () => {
             changePassModal.classList.remove('hidden');
+            setTimeout(() => changePassContent.classList.remove('scale-90', 'opacity-0'), 10);
         });
 
-        // Hide modal
         cancelChangePass.addEventListener('click', () => {
-            changePassModal.classList.add('hidden');
-            oldPasswordError.classList.add('hidden'); // Hide error on cancel
-            oldPasswordInput.classList.remove('border-red-500'); // Reset border
-            changePassForm.reset(); // Reset form
+            changePassContent.classList.add('scale-90', 'opacity-0');
+            setTimeout(() => changePassModal.classList.add('hidden'), 300);
+            oldPasswordError.classList.add('hidden');
+            oldPasswordInput.classList.remove('border-red-500');
+            changePassForm.reset();
         });
 
-        // Handle form submission
-        changePassForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+        // Feature Not Ready Modal
+        const featureModal = document.getElementById('popup-modal');
+        const closeFeatureModal = document.getElementById('close-feature-modal');
+        const buttons = document.querySelectorAll('[data-feature-not-ready]');
 
-            const oldPassword = oldPasswordInput.value;
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                featureModal.classList.remove('hidden');
+            });
+        });
 
-            // Mock validation (replace this with server-side validation)
-            if (oldPassword !== 'correct-password') { // replace 'correct-password' with real check
-                oldPasswordError.classList.remove('hidden');
-                oldPasswordInput.classList.add('border-red-500');
-            } else {
-                // Redirect to logout
-                window.location.href = 'auth/logout';
-            }
+        closeFeatureModal.addEventListener('click', () => {
+            featureModal.classList.add('hidden');
         });
     });
 </script>
 
-</body>
-
-</html>
+<?php
+require_once './layout/bottom.php';
+?>

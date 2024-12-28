@@ -19,31 +19,27 @@ header("Access-Control-Allow-Headers: Content-Type");
         }
 
         @keyframes spin {
-            100% {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
+
         #preloader {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background-color: white;
             z-index: 50;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: grid;
+            place-items: center;
         }
+
         .avatar-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: grid;
+            place-items: center;
             width: 100vw;
             height: 100vh;
             background-color: white;
         }
-        img {
+
+        .avatar-image {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
@@ -59,91 +55,110 @@ header("Access-Control-Allow-Headers: Content-Type");
         </svg>
     </div>
     <div class="avatar-container">
-        <img id="avatar-gif" src="" alt="Avatar GIF">
+        <img id="avatar-gif" class="avatar-image" src="" alt="Avatar GIF">
     </div>
 
     <script>
-        const normalGifs = ['good.gif', 'guitar.gif', 'watered.gif'];
-        const lowMoistureGifs = ['rontok.gif', 'crying.gif'];
-        const nightModeGifs = ['lollipop.gif'];
+        const GIFS = {
+            normal: ['good.gif', 'guitar.gif', 'watered.gif'],
+            low: ['rontok.gif', 'crying.gif'],
+            night: ['lollipop.gif']
+        };
 
-        const avatarImage = document.getElementById('avatar-gif');
+        const THRESHOLDS = {
+            soil: { min: 60, max: 70 },
+            humidity: { min: 60, max: 70 },
+            temp: { min: 20 }
+        };
 
-        let previousCondition = 'normal';
+        const UPDATE_INTERVAL = 5000;
+        const PRELOADER_DELAY = 1000;
+        const NIGHT_HOURS = { start: 20.5, end: 4 };
+        const API_URL = 'https://botaniq.cogarden.app/backend/load_data.php';
 
-        function getCurrentTime() {
-            const now = new Date();
-            return now.getHours();
-        }
-
-        function isNightMode() {
-            const hours = getCurrentTime();
-            return (hours >= 20.5 || hours < 4);
-        }
-
-        function selectRandomGif(gifs) {
-            const randomIndex = Math.floor(Math.random() * gifs.length);
-            return gifs[randomIndex];
-        }
-
-        function loadAvatar(temp, humidity, soil) {
-            const isMoistureLow = soil < 60 || soil > 70;
-            const isHumidityLow = humidity < 60 || humidity > 70;
-            const isTempLow = temp < 20;
-
-            let selectedGif;
-            let currentCondition;
-            if (isNightMode()) {
-                currentCondition = isMoistureLow || isHumidityLow || isTempLow ? 'low' : 'night';
-            } else {
-                currentCondition = isMoistureLow || isHumidityLow || isTempLow ? 'low' : 'normal';
+        class AvatarManager {
+            constructor() {
+                this.avatarElement = document.getElementById('avatar-gif');
+                this.previousCondition = 'normal';
+                this.init();
             }
-            if (currentCondition !== previousCondition) {
-                if (currentCondition === 'night') {
-                    selectedGif = selectRandomGif(nightModeGifs);
-                } else if (currentCondition === 'low') {
-                    selectedGif = selectRandomGif(lowMoistureGifs);
-                } else {
-                    selectedGif = selectRandomGif(normalGifs);
-                }
 
-                avatarImage.src = `/assets/avatars/${selectedGif}`;
-                previousCondition = currentCondition; 
+            init() {
+                this.setupEventListeners();
+                this.startAvatarUpdater();
             }
-        }
 
-        function fetchData() {
-            return fetch('https://botaniq.cogarden.app/backend/load_data.php')
-                .then(response => response.json())
-                .then(data => {
+            setupEventListeners() {
+                window.addEventListener('load', () => this.handleInitialLoad());
+            }
+
+            handleInitialLoad() {
+                const preloader = document.getElementById('preloader');
+                setTimeout(() => {
+                    this.updateAvatarSrc(this.getRandomGif('normal'));
+                    preloader.style.display = 'none';
+                }, PRELOADER_DELAY);
+            }
+
+            isNightMode() {
+                const hours = new Date().getHours();
+                return hours >= NIGHT_HOURS.start || hours < NIGHT_HOURS.end;
+            }
+
+            getRandomGif(condition) {
+                const gifs = GIFS[condition];
+                return gifs[Math.floor(Math.random() * gifs.length)];
+            }
+
+            updateAvatarSrc(gif) {
+                this.avatarElement.src = `/assets/avatars/${gif}`;
+            }
+
+            async fetchData() {
+                try {
+                    const response = await fetch(API_URL);
+                    const data = await response.json();
                     return {
                         temp: parseFloat(data.temp),
                         humidity: parseFloat(data.humidity),
                         soil: parseFloat(data.soil)
                     };
-                })
-                .catch(error => console.error('Error fetching data:', error));
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    return null;
+                }
+            }
+
+            determineCondition(data) {
+                if (!data) return this.previousCondition;
+
+                const isMoistureLow = data.soil < THRESHOLDS.soil.min || data.soil > THRESHOLDS.soil.max;
+                const isHumidityLow = data.humidity < THRESHOLDS.humidity.min || data.humidity > THRESHOLDS.humidity.max;
+                const isTempLow = data.temp < THRESHOLDS.temp.min;
+
+                const isLowCondition = isMoistureLow || isHumidityLow || isTempLow;
+                
+                if (this.isNightMode()) {
+                    return isLowCondition ? 'low' : 'night';
+                }
+                return isLowCondition ? 'low' : 'normal';
+            }
+
+            async updateAvatar() {
+                const data = await this.fetchData();
+                const currentCondition = this.determineCondition(data);
+
+                if (currentCondition !== this.previousCondition) {
+                    this.updateAvatarSrc(this.getRandomGif(currentCondition));
+                    this.previousCondition = currentCondition;
+                }
+            }
+
+            startAvatarUpdater() {
+                setInterval(() => this.updateAvatar(), UPDATE_INTERVAL);
+            }
         }
-
-        function startAvatarUpdater() {
-            setInterval(async () => {
-                const data = await fetchData();
-                loadAvatar(data.temp, data.humidity, data.soil);
-            }, 5000);
-        }
-        window.addEventListener('load', function () {
-            const preloader = document.getElementById('preloader');
-
-            setTimeout(function() {
-                avatarImage.src = `/assets/avatars/${selectRandomGif(normalGifs)}`;
-
-                preloader.style.display = 'none';
-            }, 1000);
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            startAvatarUpdater();
-        });
+        document.addEventListener('DOMContentLoaded', () => new AvatarManager());
     </script>
 </body>
 </html>
