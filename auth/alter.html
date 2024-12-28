@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <title>Graduate Information | NFBS Bogor</title>
+    <style>
+    
+      body {
+        animation: fadeIn 0.5s ease-in-out;
+
+        }
+        /* Custom styles for the login page */
+        .gradient-bg {
+            background: linear-gradient(135deg, #37b9ff, #34ba96);
+        }
+
+        .rounded-form {
+            border-radius: 0.5rem;
+            max-width: 400px; /* Adjust the width as needed */
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .rounded-button {
+            border-radius: 9999px;
+        }
+
+        .input-field {
+            padding: 0.6rem 0.9rem; /* Adjust the padding as needed */
+            position: relative;
+        }
+
+        .input-field input {
+            padding-left: 2.5rem; /* Adjust the value based on label width */
+            background-color: #F4F4F5;
+        }
+
+        .input-field label {
+            position: absolute;
+            top: -1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.5rem 1rem;
+            color: gray;
+            font-size: 0.8rem;
+            border-radius: 9999px;
+        }
+
+        .form {
+            position: relative;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .font-poppins-semibold {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen gradient-bg">
+    <div class="bg-white p-8 rounded-form">
+        <h1 class="text-3xl mb-6 font-bold text-center text-gray-800 font-poppins-semibold" style="font-family: 'Poppins', sans-serif;">LOGIN SISWA</h1>
+        <br>
+        <form class="form" id="form">
+            <div class="mb-6">
+                <div class="input-field">
+                    <label for="nis">NIS</label>
+                    <input type="text" id="nis" name="nis" class="w-full rounded-full px-4 py-3 focus:outline-none focus:border-green-500 font-poppins-semibold">
+                </div>
+            </div>
+            <div class="mb-6">
+                <div class="input-field">
+                    <label for="token">TOKEN</label>
+                    <input type="password" id="token" name="token" class="w-full rounded-full px-4 py-3 focus:outline-none focus:border-green-500 font-poppins-semibold">
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-green-400 hover:bg-gray-500 rounded-button text-white px-6 py-3 transition-colors duration-300 ease-in-out font-poppins-semibold">
+                Login
+            </button>
+        </form>
+        <p class="text-xs text-red-900 font-thin text-center mt-4">*Mohon Meminta Wali kelas kamu Untuk Token Masuk.</p>
+    </div>
+
+    <script>
+      const form = document.getElementById('form');
+      form.addEventListener('submit', handleFormSubmit);
+
+      function handleFormSubmit(event) {
+          event.preventDefault();
+          const nisInput = document.getElementById('nis');
+          const tokenInput = document.getElementById('token');
+
+          const nis = nisInput.value;
+          const token = tokenInput.value;
+
+          if (nis === '' || token === '') {
+              Swal.mixin({
+                  toast: true,
+                  position: 'top-end',
+                  showConfirmButton: false,
+                  timer: 3000,
+                  onOpen: (toast) => {
+                      toast.addEventListener('mouseenter', Swal.stopTimer)
+                      toast.addEventListener('mouseleave', Swal.resumeTimer)
+                  }
+              }).fire({
+                  icon: 'error',
+                  title: 'Isi data terlebih Dahulu!',
+                  allowOutsideClick: false,
+                  onBeforeOpen: () => {
+                  },
+                  customClass: {
+                    title: 'font-poppins-semibold'
+                  }
+              });
+          } else {
+              // Show loading alert
+              Swal.mixin({
+                  toast: true,
+                  position: 'top-end',
+                  showConfirmButton: false,
+                  timer: 3000,
+                  onOpen: (toast) => {
+                      toast.addEventListener('mouseenter', Swal.stopTimer)
+                      toast.addEventListener('mouseleave', Swal.resumeTimer)
+                  }
+              }).fire({
+                  icon: 'info',
+                  title: 'Sedang Mencari Data',
+                  allowOutsideClick: false,
+                  onBeforeOpen: () => {
+                      // Perform API request for validation
+                      validateCredentials(nis, token);
+                  },
+                  customClass: {
+                    title: 'font-poppins-semibold'
+                  }
+              });
+          }
+      }
+
+      function validateCredentials(nis, token) {
+          const url = `https://api.farrelprmn.me/nis=${nis}&token=${token}`;
+
+          // Perform the API request using fetch
+          fetch(url)
+              .then(response => response.text())
+              .then(data => {
+                  // Handle the response
+                  if (data === 'salah') {
+                      Swal.mixin({
+                          toast: true,
+                          position: 'top-end',
+                          showConfirmButton: false,
+                          timer: 3000,
+                          onOpen: (toast) => {
+                              toast.addEventListener('mouseenter', Swal.stopTimer)
+                              toast.addEventListener('mouseleave', Swal.resumeTimer)
+                          }
+                      }).fire({
+                          icon: 'error',
+                          title: 'TOKEN Salah',
+                          allowOutsideClick: false,
+                          onBeforeOpen: () => {
+                          },
+                          customClass: {
+                            title: 'font-poppins-semibold'
+                          }
+                      });
+
+                    } else {
+                      Swal.mixin({
+                          toast: true,
+                          position: 'top-end',
+                          showConfirmButton: false,
+                          timer: 3000,
+                          onOpen: (toast) => {
+                              toast.addEventListener('mouseenter', Swal.stopTimer)
+                              toast.addEventListener('mouseleave', Swal.resumeTimer)
+                          }
+                      }).fire({
+                          icon: 'success',
+                          title: 'Berhasil Login',
+                          allowOutsideClick: false,
+                          onBeforeOpen: () => {
+                          },
+                          customClass: {
+                            title: 'font-poppins-semibold'
+                          }
+                      });
+                      // Proceed with login or other actions
+                      // You can redirect the user or perform additional operations here
+                  }
+              })
+              .catch(error => {
+                  console.error(error);
+                  Swal.mixin({
+                      toast: true,
+                      position: 'top-end',
+                      showConfirmButton: false,
+                      timer: 3000,
+                      onOpen: (toast) => {
+                          toast.addEventListener('mouseenter', Swal.stopTimer)
+                          toast.addEventListener('mouseleave', Swal.resumeTimer)
+                      }
+                  }).fire({
+                      icon: 'error',
+                      title: 'Gagal Terkoneksi ke Server',
+                      allowOutsideClick: false,
+                      onBeforeOpen: () => {
+                      },
+                      customClass: {
+                        title: 'font-poppins-semibold'
+                      }
+                  });
+
+              });
+      }
+  </script>
+
+</body>
+</html>
