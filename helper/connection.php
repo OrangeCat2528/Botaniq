@@ -31,37 +31,8 @@ try {
 } catch (Exception $e) {
     error_log($e->getMessage(), 3, __DIR__ . '/../logs/error.log');
     
-    ob_start();
-?>
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Database Connection Error</title>
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <style>
-            body {
-                font-family: 'Montserrat', sans-serif;
-            }
-        </style>
-    </head>
-    <body>
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Connection to Core Server Error',
-                text: 'Try Again Later.',
-                showConfirmButton: false,
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                allowEnterKey: false
-            });
-        </script>
-    </body>
-    </html>
-<?php
-    echo ob_get_clean();
+    // Redirect to error page
+    header('Location: pages/error');
     exit;
 }
 
