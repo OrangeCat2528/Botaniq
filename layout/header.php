@@ -1,13 +1,6 @@
 <?php
-session_start();
-function isLogin()
-{
-    if (!isset($_SESSION['login'])) {
-        header('Location: ../auth/login.php');
-        exit();
-    }
-}
-isLogin();
+require_once '../helper/auth_helper.php';
+ensureAuthenticated();
 
 $page = basename($_SERVER['PHP_SELF'], ".php");
 

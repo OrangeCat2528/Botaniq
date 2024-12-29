@@ -1,7 +1,7 @@
 <?php
-session_start();
+require_once 'helper/auth_helper.php';
 
-if (isset($_SESSION['login'])) {
+if (isUserLoggedIn()) {
     header('Location: dashboard');
     exit;
 } else {
