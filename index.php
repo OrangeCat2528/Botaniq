@@ -11,7 +11,7 @@ $result = mysqli_query($connection, $query);
 $maintenance = mysqli_fetch_assoc($result);
 
 if ($maintenance && $maintenance['is_maintenance']) {
-    header('Location: maintenance');
+    header('Location: pages/maintenance');
     exit();
 }
 

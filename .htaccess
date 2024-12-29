@@ -1,4 +1,12 @@
 RewriteEngine On
+
+ErrorDocument 500 /pages/error
+ErrorDocument 501 /pages/error
+ErrorDocument 502 /pages/error
+ErrorDocument 503 /pages/error
+ErrorDocument 504 /pages/error
+ErrorDocument 505 /pages/error
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^([^\.]+)$ $1.php [NC,L]
 

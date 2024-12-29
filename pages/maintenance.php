@@ -1,6 +1,6 @@
 <?php
-require_once 'helper/connection.php';
-require_once 'layout/top.php';
+require_once '../helper/connection.php';
+require_once '../layout/top.php';
 
 // Maintenance Configuration Class
 class MaintenanceConfig {
