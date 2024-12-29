@@ -1,65 +1,114 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+// auth_helper.php
 require_once 'connection.php';
-require_once 'encryption.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-function isUserLoggedIn() {
-    global $connection;
+use PHPAuth\Config as PHPAuthConfig;
+use PHPAuth\Auth as PHPAuth;
 
-    if (isset($_SESSION['login']) && !empty($_SESSION['login']['id'])) {
-        return true;
-    }
-
-    if (isset($_COOKIE['remember_token'])) {
-        try {
-            $encryptedToken = $_COOKIE['remember_token'];
-            $rawToken = decryptToken($encryptedToken);
-
-            $stmt = $connection->prepare("SELECT ut.user_id, u.username, u.linked_id 
-                                       FROM user_tokens ut 
-                                       JOIN users u ON ut.user_id = u.id 
-                                       WHERE ut.token = ? AND ut.expires_at > NOW()");
-            $stmt->bind_param("s", $rawToken);
-            $stmt->execute();
-            $result = $stmt->get_result();
-
-            if ($result && $row = $result->fetch_assoc()) {
-                $_SESSION['login'] = [
-                    'id' => $row['user_id'],
-                    'username' => $row['username'],
-                    'linked_id' => $row['linked_id']
-                ];
-                return true;
-            }
-        } catch (Exception $e) {
-            error_log("Auth Error: " . $e->getMessage());
-            return false;
-        }
-    }
-    return false;
-}
-
-function ensureAuthenticated() {
-    if (!isUserLoggedIn()) {
-        header('Location: ../auth/login.php');
-        exit();
-    }
-}
-
-function getCurrentUser() {
-    global $connection;
+class AuthHelper {
+    private static $instance = null;
+    private $auth;
+    private $config;
+    private $connection;
     
-    if (!isUserLoggedIn()) {
+    private function __construct($connection) {
+        $this->connection = $connection;
+        $this->config = new PHPAuthConfig($connection);
+        $this->auth = new PHPAuth($connection, $this->config);
+    }
+    
+    public static function getInstance() {
+        if (self::$instance === null) {
+            global $connection;
+            self::$instance = new self($connection);
+        }
+        return self::$instance;
+    }
+    
+    private function getUserLinkedId($username) {
+        $stmt = $this->connection->prepare("SELECT linked_id FROM users WHERE username = ? LIMIT 1");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            return $row['linked_id'];
+        }
         return null;
     }
-
-    $userId = $_SESSION['login']['id'];
-    $stmt = $connection->prepare("SELECT * FROM users WHERE id = ?");
-    $stmt->bind_param("i", $userId);
-    $stmt->execute();
-    $result = $stmt->get_result();
     
-    return $result->fetch_assoc();
+    public function login($username, $password, $remember = true) {
+        $result = $this->auth->login($username, $password, $remember);
+        if ($result['error']) {
+            throw new Exception($result['message']);
+        }
+        
+        // Get linked_id from users table
+        $linked_id = $this->getUserLinkedId($username);
+        
+        if ($remember) {
+            // Set auth cookie
+            setcookie(
+                'botaniq_session',
+                $result['hash'],
+                time() + (86400 * 365),
+                '/',
+                '',
+                true,
+                true
+            );
+            
+            // Set linked_id cookie
+            setcookie(
+                'botaniq_linked_id',
+                $linked_id,
+                time() + (86400 * 365),
+                '/',
+                '',
+                true,
+                false // Allow JavaScript access for API validation
+            );
+        }
+        
+        return array_merge($result, ['linked_id' => $linked_id]);
+    }
+    
+    public function isLogged() {
+        if (isset($_COOKIE['botaniq_session'])) {
+            return $this->auth->isLogged();
+        }
+        return false;
+    }
+    
+    public function getCurrentUser() {
+        if ($this->isLogged()) {
+            $uid = $this->auth->getCurrentUID();
+            $authUser = $this->auth->getUser($uid);
+            
+            // Get additional user data from your users table
+            $stmt = $this->connection->prepare("SELECT linked_id FROM users WHERE username = ?");
+            $stmt->bind_param("s", $authUser['username']);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $userData = $result->fetch_assoc();
+            
+            return array_merge($authUser, ['linked_id' => $userData['linked_id']]);
+        }
+        return null;
+    }
+    
+    public function logout() {
+        $sessionHash = $_COOKIE['botaniq_session'] ?? null;
+        
+        if ($sessionHash) {
+            // Hapus cookie
+            setcookie('botaniq_session', '', time() - 3600, '/');
+            setcookie('botaniq_linked_id', '', time() - 3600, '/');
+            
+            // Logout dari PHPAuth dengan session hash
+            return $this->auth->logout($sessionHash);
+        }
+        
+        return true; // Return true jika memang tidak ada session
+    }
 }

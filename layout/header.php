@@ -1,12 +1,13 @@
 <?php
 require_once '../helper/auth_helper.php';
-ensureAuthenticated();
+$auth = AuthHelper::getInstance();
 
-$currentUser = getCurrentUser();
-if (!$currentUser) {
+if (!$auth->isLogged()) {
     header('Location: ../auth/login.php');
     exit();
 }
+
+$currentUser = $auth->getCurrentUser();
 
 $page = basename($_SERVER['PHP_SELF'], ".php");
 $headerTitles = [
