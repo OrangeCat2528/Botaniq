@@ -60,9 +60,12 @@ require_once './layout/sidebar.php';
     </div>
 
     <!-- LOG OUT Button -->
-    <div class="flex justify-center mt-5 w-full px-4">
+    <div class="flex justify-center mt-5 w-full px-4 space-x-3">
         <a href="auth/logout" class="bg-red-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-red-600 transition duration-200 shadow-md text-sm flex items-center justify-center w-auto">
             LOG OUT
+        </a>
+        <a href="auth/logoutall" class="bg-gray-800 text-white font-semibold py-2 px-4 rounded-full hover:bg-gray-900 transition duration-200 shadow-md text-sm flex items-center justify-center w-auto">
+            LOGOUT ALL DEVICE
         </a>
     </div>
 

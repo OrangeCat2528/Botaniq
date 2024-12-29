@@ -17,7 +17,7 @@ if ($maintenance && $maintenance['is_maintenance']) {
 
 // Priority 2: Check Authentication
 if (!$auth->isLogged()) {
-    header('Location: auth/login.php');
+    header('Location: auth/login');
     exit();
 }
 
@@ -25,7 +25,7 @@ if (!$auth->isLogged()) {
 $currentUser = $auth->getCurrentUser();
 if (!$currentUser) {
     $auth->logout();
-    header('Location: auth/login.php');
+    header('Location: auth/login');
     exit();
 }
 
@@ -36,7 +36,7 @@ if (rand(1, 100) === 1) {
 
 // Priority 4: Check Device Linking
 if ($currentUser['linked_id'] === null || $currentUser['linked_id'] == 0) {
-    header('Location: device/link.php');
+    header('Location: connect');
     exit();
 }
 

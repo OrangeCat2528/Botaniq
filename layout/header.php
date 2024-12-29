@@ -11,7 +11,7 @@ if (!$auth->isLogged()) {
 $currentUser = $auth->getCurrentUser();
 if (!$currentUser) {
     $auth->logout();
-    header('Location: ../auth/login.php');
+    header('Location: ../auth/login');
     exit();
 }
 
