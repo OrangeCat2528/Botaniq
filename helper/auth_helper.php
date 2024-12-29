@@ -8,12 +8,10 @@ require_once 'encryption.php';
 function isUserLoggedIn() {
     global $connection;
 
-    // Prioritaskan session terlebih dahulu
     if (isset($_SESSION['login']) && !empty($_SESSION['login']['id'])) {
         return true;
     }
 
-    // Cek remember token jika session tidak ada
     if (isset($_COOKIE['remember_token'])) {
         try {
             $encryptedToken = $_COOKIE['remember_token'];

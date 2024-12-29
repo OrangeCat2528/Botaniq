@@ -1,31 +1,40 @@
 <?php
+require_once 'helper/connection.php';
+
+$query = "SELECT is_maintenance FROM maintenance_mode ORDER BY id DESC LIMIT 1";
+$result = mysqli_query($connection, $query);
+$maintenance = mysqli_fetch_assoc($result);
+
+if ($maintenance && $maintenance['is_maintenance']) {
+    header('Location: maintenance');
+    exit();
+}
+?>
+
+<?php
+
 require_once 'helper/auth_helper.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Cek autentikasi
 if (!isUserLoggedIn()) {
-    header('Location: auth/login');
+    header('Location: auth/login.php');
     exit();
 }
 
-// Ambil data user
 $currentUser = getCurrentUser();
 if (!$currentUser) {
-    require_once 'auth/logout';
+    require_once 'auth/logout.php';
     exit();
 }
 
-// Cek linked_id
 if ($currentUser['linked_id'] === null || $currentUser['linked_id'] === 0) {
-    // Redirect ke halaman linking device jika belum ter-link
     header('Location: device/link.php');
     exit();
 }
 
-// Redirect ke dashboard jika semua pengecekan berhasil
 header('Location: dashboard');
 exit();
 ?>
