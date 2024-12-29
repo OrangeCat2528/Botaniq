@@ -1,13 +1,10 @@
 <?php
 require_once 'helper/auth_helper.php';
 
-if (isUserLoggedIn()) {
-    header('Location: dashboard');
-    exit;
-} else {
-    header('Location: auth/login');
-    exit;
-}
+ensureAuthenticated();
+
+header('Location: dashboard');
+exit();
 ?>
 
 <!DOCTYPE html>
