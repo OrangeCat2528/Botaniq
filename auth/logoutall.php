@@ -22,5 +22,5 @@ if ($currentUser) {
     }
 }
 
-header('Location: login.php');
+header('Location: login');
 exit();
