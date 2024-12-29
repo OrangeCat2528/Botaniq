@@ -3,6 +3,8 @@
 require_once 'helper/connection.php';
 require_once 'helper/auth_helper.php';
 
+$auth = AuthHelper::getInstance();
+
 // Priority 1: Check Maintenance Mode
 $query = "SELECT is_maintenance FROM maintenance_mode ORDER BY id DESC LIMIT 1";
 $result = mysqli_query($connection, $query);
@@ -14,19 +16,22 @@ if ($maintenance && $maintenance['is_maintenance']) {
 }
 
 // Priority 2: Check Authentication
-$auth = AuthHelper::getInstance();
-
 if (!$auth->isLogged()) {
     header('Location: auth/login.php');
     exit();
 }
 
-// Priority 3: Check User Data
+// Priority 3: Check User Data & Clean Expired Tokens
 $currentUser = $auth->getCurrentUser();
 if (!$currentUser) {
     $auth->logout();
     header('Location: auth/login.php');
     exit();
+}
+
+// Clean expired tokens occasionally (1% chance)
+if (rand(1, 100) === 1) {
+    $auth->cleanExpiredTokens();
 }
 
 // Priority 4: Check Device Linking
@@ -35,10 +40,14 @@ if ($currentUser['linked_id'] === null || $currentUser['linked_id'] == 0) {
     exit();
 }
 
+// Refresh token if needed
+$auth->refreshTokenIfNeeded();
+
 // All checks passed, redirect to dashboard
 header('Location: dashboard');
 exit();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

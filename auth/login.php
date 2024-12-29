@@ -1,20 +1,40 @@
 <?php
+// login.php
 require_once '../helper/auth_helper.php';
 
 $auth = AuthHelper::getInstance();
 
+if ($auth->isLogged()) {
+   header("Location: ../dashboard");
+   exit();
+}
+
+$message = '';
+$message_type = '';
+
 if (isset($_POST['submit'])) {
-    try {
-        $username = trim($_POST['username']);
-        $password = trim($_POST['password']);
-        
-        $result = $auth->login($username, $password, true);
-        header('Location: ../dashboard');
-        exit();
-    } catch (Exception $e) {
-        $message = $e->getMessage();
-        $message_type = 'error';
-    }
+   try {
+       $username = trim($_POST['username']);
+       $password = trim($_POST['password']);
+
+       if (empty($username) || empty($password)) {
+           throw new Exception("Please fill in all fields");
+       }
+
+       $user = $auth->login($username, $password);
+       $linked_id = is_null($user['linked_id']) ? 0 : $user['linked_id'];
+
+       if ($linked_id === 0) {
+           header("Location: ../device/link.php");
+       } else {
+           header("Location: ../dashboard");
+       }
+       exit();
+
+   } catch (Exception $e) {
+       $message = $e->getMessage();
+       $message_type = 'error';
+   }
 }
 ?>
 

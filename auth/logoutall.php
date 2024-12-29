@@ -1,18 +1,26 @@
 <?php
-session_start();
-require_once '../helper/connection.php';
+require_once '../helper/auth_helper.php';
 
-if (isset($_SESSION['login']['id'])) {
-    $user_id = $_SESSION['login']['id'];
-    $stmt = $connection->prepare("DELETE FROM user_tokens WHERE user_id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
+$auth = AuthHelper::getInstance();
+$currentUser = $auth->getCurrentUser();
+
+if ($currentUser) {
+    try {
+        // Delete all tokens for this user
+        $stmt = $connection->prepare("DELETE FROM user_tokens WHERE user_id = ?");
+        $stmt->bind_param("i", $currentUser['id']);
+        $stmt->execute();
+        $stmt->close();
+        
+        // Logout current session
+        $auth->logout();
+        
+        header('Location: login.php');
+        exit();
+    } catch (Exception $e) {
+        error_log("LogoutAll Error: " . $e->getMessage());
+    }
 }
 
-unset($_SESSION['login']);
-$_SESSION['login'] = null;
-
-setcookie('remember_token', '', time() - 3600, '/', '', true, true);
-
-header('Location: login');
+header('Location: login.php');
 exit();

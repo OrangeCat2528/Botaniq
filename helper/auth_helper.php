@@ -1,113 +1,226 @@
 <?php
+// helper/auth_helper.php
 require_once 'connection.php';
-require_once __DIR__ . '/../vendor/autoload.php';
-
-use PHPAuth\Config as PHPAuthConfig;
-use PHPAuth\Auth as PHPAuth;
+require_once 'encryption.php';
+require_once 'session_manager.php';
 
 class AuthHelper {
-    private static $instance = null;
-    private $auth;
-    private $config;
-    private $connection;
-    
-    private function __construct($mysqli, $pdo) {
-        $this->connection = $mysqli;
-        $this->config = new PHPAuthConfig($pdo);
-        $this->auth = new PHPAuth($pdo, $this->config);
-    }
-    
-    public static function getInstance() {
-        if (self::$instance === null) {
-            global $connection, $pdo;
-            self::$instance = new self($connection, $pdo);
-        }
-        return self::$instance;
-    }
-    
-    private function getUserLinkedId($username) {
-        $stmt = $this->connection->prepare("SELECT linked_id FROM users WHERE username = ? LIMIT 1");
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if ($row = $result->fetch_assoc()) {
-            return $row['linked_id'];
-        }
-        return null;
-    }
-    
-    public function login($username, $password, $remember = true) {
-        $result = $this->auth->login($username, $password, $remember);
-        if ($result['error']) {
-            throw new Exception($result['message']);
-        }
-        
-        // Get linked_id from users table
-        $linked_id = $this->getUserLinkedId($username);
-        
-        if ($remember) {
-            // Set auth cookie
-            setcookie(
-                'botaniq_session',
-                $result['hash'],
-                time() + (86400 * 365),
-                '/',
-                '',
-                true,
-                true
-            );
-            
-            // Set linked_id cookie
-            setcookie(
-                'botaniq_linked_id',
-                $linked_id,
-                time() + (86400 * 365),
-                '/',
-                '',
-                true,
-                false // Allow JavaScript access for API validation
-            );
-        }
-        
-        return array_merge($result, ['linked_id' => $linked_id]);
-    }
-    
-    public function isLogged() {
-        if (isset($_COOKIE['botaniq_session'])) {
-            return $this->auth->isLogged();
-        }
-        return false;
-    }
-    
-    public function getCurrentUser() {
-        if ($this->isLogged()) {
-            $uid = $this->auth->getCurrentUID();
-            $authUser = $this->auth->getUser($uid);
-            
-            // Get additional user data from your users table
-            $stmt = $this->connection->prepare("SELECT linked_id FROM users WHERE username = ?");
-            $stmt->bind_param("s", $authUser['username']);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $userData = $result->fetch_assoc();
-            
-            return array_merge($authUser, ['linked_id' => $userData['linked_id']]);
-        }
-        return null;
-    }
-    
-    public function logout() {
-        $sessionHash = $_COOKIE['botaniq_session'] ?? null;
-        
-        if ($sessionHash) {
-            // Hapus cookie
-            setcookie('botaniq_session', '', time() - 3600, '/');
-            setcookie('botaniq_linked_id', '', time() - 3600, '/');
-            
-            // Logout dari PHPAuth dengan session hash
-            return $this->auth->logout($sessionHash);
-        }
-        
-        return true; // Return true jika memang tidak ada session
-    }
+   private static $instance = null;
+   private $connection;
+   private $pdo;
+   private $sessionManager;
+   
+   private function __construct($mysqli, $pdo) {
+       $this->connection = $mysqli;
+       $this->pdo = $pdo;
+       $this->sessionManager = SessionManager::getInstance();
+   }
+   
+   public static function getInstance() {
+       if (self::$instance === null) {
+           global $connection, $pdo;
+           self::$instance = new self($connection, $pdo);
+       }
+       return self::$instance;
+   }
+   
+   public function isLogged() {
+       // Check token first
+       if (isset($_COOKIE['botaniq_token'])) {
+           try {
+               $encryptedToken = $_COOKIE['botaniq_token'];
+               $rawToken = decryptToken($encryptedToken);
+               
+               $stmt = $this->pdo->prepare("
+                   SELECT ut.*, u.* 
+                   FROM user_tokens ut 
+                   JOIN users u ON ut.user_id = u.id 
+                   WHERE ut.token = ? AND ut.expires_at > NOW()
+                   LIMIT 1
+               ");
+               $stmt->execute([$rawToken]);
+               
+               if ($user = $stmt->fetch()) {
+                   $_SESSION['login'] = [
+                       'id' => $user['id'],
+                       'username' => $user['username'],
+                       'linked_id' => $user['linked_id']
+                   ];
+                   
+                   // Refresh token
+                   $newExpiry = date('Y-m-d H:i:s', time() + 31536000);
+                   $this->pdo->prepare("
+                       UPDATE user_tokens 
+                       SET expires_at = ? 
+                       WHERE token = ?
+                   ")->execute([$newExpiry, $rawToken]);
+                   
+                   // Refresh cookie
+                   setcookie(
+                       'botaniq_token',
+                       $encryptedToken,
+                       [
+                           'expires' => time() + 31536000,
+                           'path' => '/',
+                           'secure' => true,
+                           'httponly' => true,
+                           'samesite' => 'Lax'
+                       ]
+                   );
+                   
+                   return true;
+               }
+           } catch (Exception $e) {
+               error_log("Auth Error: " . $e->getMessage());
+           }
+       }
+       
+       // Fallback to session
+       return isset($_SESSION['login']) && !empty($_SESSION['login']['id']);
+   }
+   
+   public function getCurrentUser() {
+       if (!$this->isLogged()) {
+           return null;
+       }
+
+       try {
+           $stmt = $this->pdo->prepare("
+               SELECT * FROM users 
+               WHERE id = ? 
+               LIMIT 1
+           ");
+           $stmt->execute([$_SESSION['login']['id']]);
+           return $stmt->fetch();
+       } catch (Exception $e) {
+           error_log("GetCurrentUser Error: " . $e->getMessage());
+           return null;
+       }
+   }
+   
+   public function login($username, $password) {
+       try {
+           $stmt = $this->connection->prepare("SELECT * FROM users WHERE username = ? AND password = ? LIMIT 1");
+           $stmt->bind_param("ss", $username, $password);
+           $stmt->execute();
+           $result = $stmt->get_result();
+           $user = $result->fetch_assoc();
+           
+           if (!$user) {
+               throw new Exception("Invalid username or password");
+           }
+           
+           $linked_id = is_null($user['linked_id']) ? 0 : $user['linked_id'];
+           
+           $_SESSION['login'] = [
+               'id' => $user['id'],
+               'username' => $user['username'],
+               'linked_id' => $linked_id
+           ];
+
+           // Generate and save token
+           $rawToken = bin2hex(random_bytes(32));
+           $encryptedToken = encryptToken($rawToken);
+           $device_info = $_SERVER['HTTP_USER_AGENT'];
+           $expires_at = date('Y-m-d H:i:s', time() + 31536000);
+
+           // Remove old tokens for this device
+           $deleteStmt = $this->pdo->prepare("
+               DELETE FROM user_tokens 
+               WHERE user_id = ? AND device_info = ?
+           ");
+           $deleteStmt->execute([$user['id'], $device_info]);
+
+           // Save new token
+           $tokenStmt = $this->pdo->prepare("
+               INSERT INTO user_tokens (user_id, token, device_info, expires_at) 
+               VALUES (?, ?, ?, ?)
+           ");
+           $tokenStmt->execute([$user['id'], $rawToken, $device_info, $expires_at]);
+
+           // Set token cookie
+           setcookie(
+               'botaniq_token',
+               $encryptedToken,
+               [
+                   'expires' => time() + 31536000,
+                   'path' => '/',
+                   'secure' => true,
+                   'httponly' => true,
+                   'samesite' => 'Lax'
+               ]
+           );
+
+           return $user;
+       } catch (Exception $e) {
+           error_log("Login Error: " . $e->getMessage());
+           throw $e;
+       }
+   }
+   
+   public function logout() {
+       if (isset($_COOKIE['botaniq_token'])) {
+           try {
+               $encryptedToken = $_COOKIE['botaniq_token'];
+               $rawToken = decryptToken($encryptedToken);
+               
+               $stmt = $this->pdo->prepare("DELETE FROM user_tokens WHERE token = ?");
+               $stmt->execute([$rawToken]);
+               
+               setcookie('botaniq_token', '', time() - 3600, '/');
+           } catch (Exception $e) {
+               error_log("Logout Error: " . $e->getMessage());
+           }
+       }
+       
+       SessionManager::destroySession();
+   }
+
+   public function cleanExpiredTokens() {
+       try {
+           $stmt = $this->pdo->prepare("DELETE FROM user_tokens WHERE expires_at < NOW()");
+           $stmt->execute();
+       } catch (Exception $e) {
+           error_log("Clean Tokens Error: " . $e->getMessage());
+       }
+   }
+
+   public function refreshTokenIfNeeded() {
+       if (isset($_COOKIE['botaniq_token'])) {
+           try {
+               $encryptedToken = $_COOKIE['botaniq_token'];
+               $rawToken = decryptToken($encryptedToken);
+               
+               $stmt = $this->pdo->prepare("
+                   SELECT * FROM user_tokens 
+                   WHERE token = ? AND expires_at > NOW()
+                   LIMIT 1
+               ");
+               $stmt->execute([$rawToken]);
+               
+               if ($token = $stmt->fetch()) {
+                   $newExpiry = date('Y-m-d H:i:s', time() + 31536000);
+                   $this->pdo->prepare("
+                       UPDATE user_tokens 
+                       SET expires_at = ? 
+                       WHERE token = ?
+                   ")->execute([$newExpiry, $rawToken]);
+                   
+                   setcookie(
+                       'botaniq_token',
+                       $encryptedToken,
+                       [
+                           'expires' => time() + 31536000,
+                           'path' => '/',
+                           'secure' => true,
+                           'httponly' => true,
+                           'samesite' => 'Lax'
+                       ]
+                   );
+               }
+           } catch (Exception $e) {
+               error_log("Token Refresh Error: " . $e->getMessage());
+           }
+       }
+   }
 }

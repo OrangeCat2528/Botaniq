@@ -1,5 +1,6 @@
 <?php
-require_once '../helper/auth_helper.php';
+require_once './helper/auth_helper.php';
+
 $auth = AuthHelper::getInstance();
 
 if (!$auth->isLogged()) {
@@ -8,6 +9,14 @@ if (!$auth->isLogged()) {
 }
 
 $currentUser = $auth->getCurrentUser();
+if (!$currentUser) {
+    $auth->logout();
+    header('Location: ../auth/login.php');
+    exit();
+}
+
+// Refresh token if needed
+$auth->refreshTokenIfNeeded();
 
 $page = basename($_SERVER['PHP_SELF'], ".php");
 $headerTitles = [

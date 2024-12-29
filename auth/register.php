@@ -1,43 +1,53 @@
 <?php
-require_once '../helper/connection.php';
-session_start();
+require_once '../helper/auth_helper.php';
+
+$auth = AuthHelper::getInstance();
+
+if ($auth->isLogged()) {
+    header("Location: ../dashboard");
+    exit();
+}
 
 $message = '';
 $message_type = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
-  $username = $_POST['username'];
-  $email = $_POST['email'];
-  $password = $_POST['password'];
-  $confirm_password = $_POST['confirm_password'];
+    try {
+        $username = trim($_POST['username']);
+        $email = trim($_POST['email']);
+        $password = trim($_POST['password']);
+        $confirm_password = trim($_POST['confirm_password']);
 
-  if ($password !== $confirm_password) {
-    $message = "Password mismatch. Please re-enter your password.";
-    $message_type = 'error';
-  } else {
-    $plaintext_password = $password;
-    $stmt = $connection->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
-    $stmt->bind_param("ss", $username, $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
+        if ($password !== $confirm_password) {
+            throw new Exception("Password mismatch. Please re-enter your password.");
+        }
 
-    if ($result->num_rows > 0) {
-      $message = "Username or email already exists. Please try again.";
-      $message_type = 'error';
-    } else {
-      $stmt = $connection->prepare("INSERT INTO users (username, email, password, linked_id) VALUES (?, ?, ?, NULL)");
-      $stmt->bind_param("sss", $username, $email, $plaintext_password);
+        $stmt = $connection->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
+        $stmt->bind_param("ss", $username, $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-      if ($stmt->execute()) {
-        $message = "Registration successful. You may now log in.";
-        $message_type = 'success';
-      } else {
-        $message = "Registration failed. An error occurred. Please try again.";
+        if ($result->num_rows > 0) {
+            throw new Exception("Username or email already exists. Please try again.");
+        }
+
+        $stmt = $connection->prepare("INSERT INTO users (username, email, password, linked_id) VALUES (?, ?, ?, NULL)");
+        $stmt->bind_param("sss", $username, $email, $password);
+
+        if ($stmt->execute()) {
+            $message = "Registration successful. You may now log in.";
+            $message_type = 'success';
+        } else {
+            throw new Exception("Registration failed. Please try again.");
+        }
+        
+        $stmt->close();
+    } catch (Exception $e) {
+        $message = $e->getMessage();
         $message_type = 'error';
-      }
     }
-  }
 }
+
 ?>
 
 <!DOCTYPE html>
