@@ -1,42 +1,67 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once 'connection.php';
 require_once 'encryption.php';
 
-// Helper utama untuk mengelola otentikasi
 function isUserLoggedIn() {
     global $connection;
 
-    // Cek apakah sesi login ada
-    if (isset($_SESSION['login'])) {
+    // Prioritaskan session terlebih dahulu
+    if (isset($_SESSION['login']) && !empty($_SESSION['login']['id'])) {
         return true;
     }
 
-    // Cek cookie remember_token
+    // Cek remember token jika session tidak ada
     if (isset($_COOKIE['remember_token'])) {
-        $encryptedToken = $_COOKIE['remember_token'];
-        $rawToken = decryptToken($encryptedToken);
+        try {
+            $encryptedToken = $_COOKIE['remember_token'];
+            $rawToken = decryptToken($encryptedToken);
 
-        $stmt = $connection->prepare("SELECT user_id FROM user_tokens WHERE token = ? AND expires_at > NOW()");
-        $stmt->bind_param("s", $rawToken);
-        $stmt->execute();
-        $result = $stmt->get_result();
+            $stmt = $connection->prepare("SELECT ut.user_id, u.username, u.linked_id 
+                                       FROM user_tokens ut 
+                                       JOIN users u ON ut.user_id = u.id 
+                                       WHERE ut.token = ? AND ut.expires_at > NOW()");
+            $stmt->bind_param("s", $rawToken);
+            $stmt->execute();
+            $result = $stmt->get_result();
 
-        if ($result && $row = $result->fetch_assoc()) {
-            // Set ulang sesi jika valid
-            $_SESSION['login'] = ['id' => $row['user_id']];
-            return true;
+            if ($result && $row = $result->fetch_assoc()) {
+                $_SESSION['login'] = [
+                    'id' => $row['user_id'],
+                    'username' => $row['username'],
+                    'linked_id' => $row['linked_id']
+                ];
+                return true;
+            }
+        } catch (Exception $e) {
+            error_log("Auth Error: " . $e->getMessage());
+            return false;
         }
     }
-
-    // Jika tidak memenuhi kedua kondisi di atas, return false
     return false;
 }
 
 function ensureAuthenticated() {
-    // Gabungkan logika: Jika tidak login, redirect ke halaman login
     if (!isUserLoggedIn()) {
         header('Location: ../auth/login.php');
         exit();
     }
+}
+
+function getCurrentUser() {
+    global $connection;
+    
+    if (!isUserLoggedIn()) {
+        return null;
+    }
+
+    $userId = $_SESSION['login']['id'];
+    $stmt = $connection->prepare("SELECT * FROM users WHERE id = ?");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    return $result->fetch_assoc();
 }

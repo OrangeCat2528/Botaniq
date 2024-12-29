@@ -1,8 +1,31 @@
 <?php
 require_once 'helper/auth_helper.php';
 
-ensureAuthenticated();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
+// Cek autentikasi
+if (!isUserLoggedIn()) {
+    header('Location: auth/login');
+    exit();
+}
+
+// Ambil data user
+$currentUser = getCurrentUser();
+if (!$currentUser) {
+    require_once 'auth/logout';
+    exit();
+}
+
+// Cek linked_id
+if ($currentUser['linked_id'] === null || $currentUser['linked_id'] === 0) {
+    // Redirect ke halaman linking device jika belum ter-link
+    header('Location: device/link.php');
+    exit();
+}
+
+// Redirect ke dashboard jika semua pengecekan berhasil
 header('Location: dashboard');
 exit();
 ?>

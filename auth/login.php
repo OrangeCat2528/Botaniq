@@ -1,69 +1,84 @@
 <?php
 require_once '../helper/connection.php';
 require_once '../helper/encryption.php';
-session_start();
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Redirect jika sudah login
+if (isset($_SESSION['login'])) {
+    header("Location: ../dashboard");
+    exit();
+}
 
 $message = '';
 $message_type = '';
 
 if (isset($_POST['submit'])) {
-    $username = trim($_POST['username']);
-    $password = trim($_POST['password']);
+    try {
+        $username = trim($_POST['username']);
+        $password = trim($_POST['password']);
 
-    if ($connection) {
-        // Siapkan query untuk mendapatkan pengguna berdasarkan username
+        if (empty($username) || empty($password)) {
+            throw new Exception("Please fill in all fields");
+        }
+
         $stmt = $connection->prepare("SELECT * FROM users WHERE username = ? LIMIT 1");
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        if ($result && $row = $result->fetch_assoc()) {
-            // Periksa apakah password sesuai
-            if ($password === $row['password']) { // Jika menggunakan hashing, ganti dengan password_verify()
-                $linked_id = is_null($row['linked_id']) ? 0 : $row['linked_id'];
-
-                // Set session
-                $_SESSION['login'] = [
-                    'id' => $row['id'],
-                    'username' => $row['username'],
-                    'linked_id' => $linked_id,
-                ];
-
-                // Buat token remember
-                $rawToken = bin2hex(random_bytes(32));
-                $encryptedToken = encryptToken($rawToken);
-                $device_info = $_SERVER['HTTP_USER_AGENT'];
-                $expires_at = date('Y-m-d H:i:s', time() + 31536000); // Token berlaku selama 1 tahun
-                $stmt_token = $connection->prepare("INSERT INTO user_tokens (user_id, token, device_info, expires_at) VALUES (?, ?, ?, ?)");
-                $stmt_token->bind_param("isss", $row['id'], $rawToken, $device_info, $expires_at);
-                $stmt_token->execute();
-
-                // Simpan cookie remember_token
-                setcookie('remember_token', $encryptedToken, time() + 31536000, '/', '', true, true);
-
-                if ($linked_id === 0) {
-                    $message = "Please link your device to proceed!";
-                    $message_type = 'warning';
-                } else {
-                    header("Location: ../dashboard");
-                    exit();
-                }
-            } else {
-                $message = "Invalid username or password. Please try again.";
-                $message_type = 'error';
-            }
-        } else {
-            $message = "Invalid username or password. Please try again.";
-            $message_type = 'error';
+        if (!$result || !($user = $result->fetch_assoc())) {
+            throw new Exception("Invalid username or password");
         }
 
-        $stmt->close();
-    } else {
-        $message = "Database connection failed.";
+        // Verifikasi password (idealnya menggunakan password_verify jika password di-hash)
+        if ($password !== $user['password']) {
+            throw new Exception("Invalid username or password");
+        }
+
+        $linked_id = is_null($user['linked_id']) ? 0 : $user['linked_id'];
+        
+        // Set session login
+        $_SESSION['login'] = [
+            'id' => $user['id'],
+            'username' => $user['username'],
+            'linked_id' => $linked_id,
+        ];
+
+        // Buat dan simpan remember token secara otomatis
+        $rawToken = bin2hex(random_bytes(32));
+        $encryptedToken = encryptToken($rawToken);
+        $device_info = $_SERVER['HTTP_USER_AGENT'];
+        $expires_at = date('Y-m-d H:i:s', time() + 31536000); // 1 tahun
+
+        // Hapus token lama untuk user ini (opsional)
+        $deleteStmt = $connection->prepare("DELETE FROM user_tokens WHERE user_id = ?");
+        $deleteStmt->bind_param("i", $user['id']);
+        $deleteStmt->execute();
+
+        // Simpan token baru
+        $tokenStmt = $connection->prepare("INSERT INTO user_tokens (user_id, token, device_info, expires_at) VALUES (?, ?, ?, ?)");
+        $tokenStmt->bind_param("isss", $user['id'], $rawToken, $device_info, $expires_at);
+        $tokenStmt->execute();
+
+        // Set cookie remember token
+        setcookie('remember_token', $encryptedToken, time() + 31536000, '/', '', true, true);
+
+        if ($linked_id === 0) {
+            $message = "Please link your device to proceed!";
+            $message_type = 'warning';
+        } else {
+            header("Location: ../dashboard");
+            exit();
+        }
+
+    } catch (Exception $e) {
+        $message = $e->getMessage();
         $message_type = 'error';
     }
 }
-
 ?>
 
 
