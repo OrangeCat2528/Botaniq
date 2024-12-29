@@ -1,5 +1,4 @@
 <?php
-// auth_helper.php
 require_once 'connection.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -12,16 +11,16 @@ class AuthHelper {
     private $config;
     private $connection;
     
-    private function __construct($connection) {
-        $this->connection = $connection;
-        $this->config = new PHPAuthConfig($connection);
-        $this->auth = new PHPAuth($connection, $this->config);
+    private function __construct($mysqli, $pdo) {
+        $this->connection = $mysqli;
+        $this->config = new PHPAuthConfig($pdo);
+        $this->auth = new PHPAuth($pdo, $this->config);
     }
     
     public static function getInstance() {
         if (self::$instance === null) {
-            global $connection;
-            self::$instance = new self($connection);
+            global $connection, $pdo;
+            self::$instance = new self($connection, $pdo);
         }
         return self::$instance;
     }
