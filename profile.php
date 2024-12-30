@@ -98,8 +98,8 @@ require_once './layout/sidebar.php';
 </div>
 
 <!-- Feature Not Ready Modal -->
-<div id="popup-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
-    <div class="bg-white rounded-3xl shadow-lg p-6 w-11/12 max-w-lg relative">
+<<div id="featureNotReadyModal" class="fixed inset-0 flex items-center justify-center z-50">
+<div id="featureNotReadyContent" class="bg-white rounded-3xl shadow-lg p-6 w-11/12 max-w-lg relative transform transition duration-300">
         <button id="close-feature-modal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
             <i class="fas fa-times text-lg"></i>
         </button>
@@ -113,45 +113,32 @@ require_once './layout/sidebar.php';
     </div>
 </div>
 
+<script src="js/animation.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Change Password Modal
-        const openChangePassModal = document.getElementById('openChangePassModal');
-        const changePassModal = document.getElementById('changePassModal');
-        const changePassContent = document.getElementById('changePassContent');
-        const cancelChangePass = document.getElementById('cancelChangePass');
-        const changePassForm = document.getElementById('changePassForm');
-        const oldPasswordInput = document.getElementById('oldPassword');
-        const oldPasswordError = document.getElementById('oldPasswordError');
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize Change Password Modal
+    const changePassModal = new PopupAnimation();
+    changePassModal.init('changePassModal', 'changePassContent', '#openChangePassModal');
+    changePassModal.addCloseTrigger('#cancelChangePass');
+    
+    // Initialize Feature Not Ready Modal
+    const featureModal = new PopupAnimation();
+    featureModal.init('featureNotReadyModal', 'featureNotReadyContent', '[data-feature-not-ready]');
+    featureModal.addCloseTrigger('#close-feature-modal, .bg-green-500'); // Gabungkan selector
 
-        openChangePassModal.addEventListener('click', () => {
-            changePassModal.classList.remove('hidden');
-            setTimeout(() => changePassContent.classList.remove('scale-90', 'opacity-0'), 10);
-        });
-
-        cancelChangePass.addEventListener('click', () => {
-            changePassContent.classList.add('scale-90', 'opacity-0');
-            setTimeout(() => changePassModal.classList.add('hidden'), 300);
+    // Reset form ketika change password modal ditutup
+    const changePassForm = document.getElementById('changePassForm');
+    const oldPasswordError = document.getElementById('oldPasswordError');
+    const oldPasswordInput = document.getElementById('oldPassword');
+    
+    changePassModal.modal.addEventListener('transitionend', () => {
+        if (changePassModal.modal.classList.contains('hidden')) {
             oldPasswordError.classList.add('hidden');
             oldPasswordInput.classList.remove('border-red-500');
             changePassForm.reset();
-        });
-
-        // Feature Not Ready Modal
-        const featureModal = document.getElementById('popup-modal');
-        const closeFeatureModal = document.getElementById('close-feature-modal');
-        const buttons = document.querySelectorAll('[data-feature-not-ready]');
-
-        buttons.forEach(button => {
-            button.addEventListener('click', () => {
-                featureModal.classList.remove('hidden');
-            });
-        });
-
-        closeFeatureModal.addEventListener('click', () => {
-            featureModal.classList.add('hidden');
-        });
+        }
     });
+});
 </script>
 
 <?php
