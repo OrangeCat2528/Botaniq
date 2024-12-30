@@ -26,7 +26,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 <script src="js/dom.js?v=2"></script>
 <script src="js/data.js?v=11"></script>
 <script src="js/notifier.js?v=1"></script>
-<script src="js/cuaca.js?v=5"></script>
+<script src="js/cuaca.js?v=6"></script>
 <script src="js/tangki-air.js?v=17"></script>
 <script src="js/watertank-controller.js?v=7"></script>
 <script src="js/animation.js?v=2"></script>

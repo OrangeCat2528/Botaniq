@@ -9,9 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function fetchWeather(lat, lon) {
-        const apiKey = 'd92a201b7291802904daf6dcb9444678';
-
-        fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=id&appid=${apiKey}`)
+        fetch(`https://botaniq.cogarden.app/helper/weather_helper.php?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`)
             .then(response => response.json())
             .then(data => {
                 const weatherMain = data.weather[0].main;
