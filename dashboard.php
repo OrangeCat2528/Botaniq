@@ -23,7 +23,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 }
 ?>
 
-<script src="js/dom.js?v=2"></script>
+<script src="js/dom.js?v=3"></script>
 <script src="js/data.js?v=11"></script>
 <script src="js/notifier.js?v=1"></script>
 <script src="js/cuaca.js?v=7"></script>
