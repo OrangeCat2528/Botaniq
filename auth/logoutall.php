@@ -15,7 +15,7 @@ if ($currentUser) {
         // Logout current session
         $auth->logout();
         
-        header('Location: login.php');
+        header('Location: login');
         exit();
     } catch (Exception $e) {
         error_log("LogoutAll Error: " . $e->getMessage());
