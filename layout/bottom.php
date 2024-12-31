@@ -20,3 +20,6 @@
     <span class="text-xs mt-2">Profile</span>
   </a>
 </div>
+</body>
+
+</html>

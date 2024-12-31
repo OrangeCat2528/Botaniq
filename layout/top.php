@@ -31,6 +31,3 @@
 </head>
 
 <body class="mx-auto text-center scroll-smooth bg-gray-200">
-</body>
-
-</html>
