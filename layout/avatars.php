@@ -4,17 +4,47 @@ header("Access-Control-Allow-Methods: GET, POST");
 header("Access-Control-Allow-Headers: Content-Type");
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Botaniq Avatars</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="assets/fontawesome/css/all.css" rel="stylesheet">
 
     <style>
+        body {
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-family: "Montserrat", sans-serif;
+            font-optical-sizing: auto;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: manipulation;
+            overflow-x: hidden;
+        }
+        #avatar-gif {
+            pointer-events: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        html {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .animate-spin {
             animation: spin 1s linear infinite;
         }
@@ -45,12 +75,9 @@ header("Access-Control-Allow-Headers: Content-Type");
             width: 100vw;
             height: 100vh;
             background-color: white;
-        }
-
-        img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
     </style>
 </head>
