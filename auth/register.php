@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
         </div>
       </form>
       <p class="text-center text-gray-600 text-xs">
-        &copy;2024 Botaniq Start-Up. All rights reserved.
+        &copy;2025 Botaniq Start-Up. All rights reserved.
       </p>
     </div>
   </div>

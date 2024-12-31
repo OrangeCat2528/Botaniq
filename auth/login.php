@@ -25,7 +25,7 @@ if (isset($_POST['submit'])) {
        $linked_id = is_null($user['linked_id']) ? 0 : $user['linked_id'];
 
        if ($linked_id === 0) {
-           header("Location: ../device/link.php");
+           header("Location: ../connect");
        } else {
            header("Location: ../dashboard");
        }
@@ -195,7 +195,7 @@ if (isset($_POST['submit'])) {
         </div>
       </form>
       <p class="text-center text-gray-600 text-xs">
-        &copy;2024 Botaniq Start-Up. All rights reserved.
+        &copy;2025 Botaniq Start-Up. All rights reserved.
       </p>
       <div class="mt-4 text-center">
         <span class="text-gray-600">Just bought new Pots?</span>
