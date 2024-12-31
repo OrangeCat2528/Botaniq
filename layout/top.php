@@ -4,9 +4,8 @@
 <head>
   <title>Botaniq SuperApp</title>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="style/style.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="style/style.css?v=1" rel="stylesheet">
   <link href="assets/fontawesome/css/all.css" rel="stylesheet">
 
   <style>

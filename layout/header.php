@@ -4,7 +4,7 @@ require_once './helper/auth_helper.php';
 $auth = AuthHelper::getInstance();
 
 if (!$auth->isLogged()) {
-    header('Location: ../auth/login.php');
+    header('Location: ../auth/login');
     exit();
 }
 
