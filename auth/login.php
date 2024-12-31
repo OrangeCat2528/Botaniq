@@ -86,18 +86,67 @@ if (isset($_POST['submit'])) {
       Our application is under heavy development. Some features are not yet available and will be added soon. Thank you for your attention.
     </p>
   </div> -->
-
-  <!-- Success or Error Notification -->
-  <?php if ($message): ?>
-    <div class="m-5 p-4 rounded-3xl shadow-lg text-center flex flex-col justify-center items-center 
-                <?= $message_type === 'success' ? 'bg-green-100 border border-green-500 text-green-700' : ($message_type === 'error' ? 'bg-red-100 border border-red-500 text-red-700' : 'bg-yellow-100 border border-yellow-500 text-yellow-700') ?>">
-      <div class="flex items-center justify-center">
-        <i class="fas <?= $message_type === 'success' ? 'fa-check-circle' : ($message_type === 'error' ? 'fa-times-circle' : 'fa-exclamation-circle') ?> text-xl mr-2"></i>
-        <span class="font-bold text-lg"><?= $message_type === 'success' ? 'Success' : ($message_type === 'error' ? 'Error' : 'Warning') ?></span>
-      </div>
-      <p class="mt-2"><?= htmlspecialchars($message) ?></p>
+<!-- Success or Error Notification -->
+<?php if ($message): ?>
+  <div id="notification" class="transform opacity-0 transition-all duration-500 ease-out m-5 p-4 rounded-3xl shadow-lg text-center flex flex-col justify-center items-center 
+              <?= $message_type === 'success' ? 'bg-green-100 border border-green-500 text-green-700' : ($message_type === 'error' ? 'bg-red-100 border border-red-500 text-red-700' : 'bg-yellow-100 border border-yellow-500 text-yellow-700') ?>">
+    <div class="flex items-center justify-center">
+      <i class="fas <?= $message_type === 'success' ? 'fa-check-circle' : ($message_type === 'error' ? 'fa-times-circle' : 'fa-exclamation-circle') ?> text-xl mr-2"></i>
+      <span class="font-bold text-lg"><?= $message_type === 'success' ? 'Success' : ($message_type === 'error' ? 'Error' : 'Warning') ?></span>
     </div>
-  <?php endif; ?>
+    <p class="mt-2"><?= htmlspecialchars($message) ?></p>
+  </div>
+
+  <style>
+    @keyframes slideInUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOutUp {
+      from {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(-20px);
+        opacity: 0;
+      }
+    }
+
+    .slide-in-up {
+      animation: slideInUp 0.5s forwards;
+    }
+
+    .slide-out-up {
+      animation: slideOutUp 0.5s forwards;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const notification = document.getElementById('notification');
+      
+      setTimeout(() => {
+        notification.classList.add('slide-in-up');
+      }, 100);
+
+      setTimeout(() => {
+        notification.classList.remove('slide-in-up');
+        notification.classList.add('slide-out-up');
+        setTimeout(() => {
+          notification.style.display = 'none';
+        }, 500);
+      }, 8000);
+    });
+  </script>
+<?php endif; ?>
 
   <div class="flex-1 flex flex-col justify-center items-center">
     <div class="text-center mb-8">
