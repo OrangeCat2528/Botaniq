@@ -23,13 +23,12 @@ if ($result && mysqli_num_rows($result) > 0) {
 }
 ?>
 
-<script src="js/dom.js?v=5"></script>
+<script src="js/dom.js?v=6"></script>
 <script src="js/data.js?v=12"></script>
 <script src="js/cuaca.js?v=7"></script>
 <script src="js/tangki-air.js?v=19"></script>
 <script src="js/watertank-controller.js?v=7"></script>
 <script src="js/animation.js?v=2"></script>
-<link href="assets/watertank.css?v=11" rel="stylesheet"></link>
 
 <!-- Warning Sign -->
 <div class="warning-sign mx-5 mt-4">
@@ -164,30 +163,30 @@ if ($result && mysqli_num_rows($result) > 0) {
     </div>
 </div>
 
-<!-- Latest Article Card -->
-<div class="mx-5 mt-4 bg-white rounded-2xl border border-gray-100 overflow-hidden">
-    <div class="bg-gradient-to-r from-green-500 to-green-600 px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <div class="bg-white/20 p-2 rounded-xl">
-                <i class="fas fa-newspaper text-white"></i>
-            </div>
-            <div class="text-white">
-                <div class="text-xs opacity-80">Latest Update</div>
-                <div class="font-semibold">Featured Article</div>
-            </div>
-        </div>
-        <i class="fas fa-star text-yellow-300"></i>
-    </div>
-    
-    <div class="p-4">
-        <h3 class="font-bold text-gray-800 mb-2"><?php echo htmlspecialchars($articleTitle); ?></h3>
-        <p class="text-gray-600 text-sm leading-relaxed mb-3"><?php echo htmlspecialchars($excerpt); ?></p>
-        <a href="<?php echo htmlspecialchars($readMoreLink); ?>" class="inline-flex items-center gap-2 text-green-600 hover:text-green-700 font-medium text-sm group">
-            Read More 
-            <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
-        </a>
-    </div>
-</div>
+<!-- Latest Article Card -->  
+<div class="mx-5 mt-4 bg-white rounded-2xl border border-gray-100 overflow-hidden">  
+    <div class="bg-gradient-to-r from-green-500 to-green-600 px-4 py-3 flex items-center">  
+        <div class="flex items-center gap-3">  
+            <div class="bg-white/20 p-2 rounded-xl">  
+                <i class="fas fa-newspaper text-white"></i>  
+            </div>  
+        </div>  
+        <div class="flex-grow text-center text-white">  
+            <div class="text-xs opacity-80">Latest Update</div>  
+            <div class="font-semibold">Featured Article</div>  
+        </div>  
+        <i class="fas fa-star text-yellow-300"></i>  
+    </div>  
+      
+    <div class="p-4">  
+        <h3 class="font-bold text-gray-800 mb-2"><?php echo htmlspecialchars($articleTitle); ?></h3>  
+        <p class="text-gray-600 text-sm leading-relaxed mb-3"><?php echo htmlspecialchars($excerpt); ?></p>  
+        <a href="<?php echo htmlspecialchars($readMoreLink); ?>" class="inline-flex items-center gap-2 text-green-600 hover:text-green-700 font-medium text-sm group">  
+            Read More   
+            <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>  
+        </a>  
+    </div>  
+</div>  
 
 <!-- Status Bar -->
 <div class="h-32"></div>
