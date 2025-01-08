@@ -23,89 +23,183 @@ if ($result && mysqli_num_rows($result) > 0) {
 }
 ?>
 
-<script src="js/dom.js?v=3"></script>
-<script src="js/data.js?v=11"></script>
-<script src="js/notifier.js?v=1"></script>
+<script src="js/dom.js?v=4"></script>
+<script src="js/data.js?v=12"></script>
 <script src="js/cuaca.js?v=7"></script>
-<script src="js/tangki-air.js?v=17"></script>
+<script src="js/tangki-air.js?v=18"></script>
 <script src="js/watertank-controller.js?v=7"></script>
 <script src="js/animation.js?v=2"></script>
 <link href="assets/watertank.css?v=11" rel="stylesheet"></link>
 
-<div class="warning-sign m-5 p-4 bg-yellow-400 rounded-3xl shadow-lg text-center flex flex-col justify-center items-center hidden">
-  <div class="flex items-center justify-center">
-    <i class="fas fa-exclamation-triangle text-xl mr-2"></i>
-    <span class="font-bold text-lg">Warning</span>
-  </div>
-  <p class="mt-2">
-    Pot is Offline, Check Device Connection.
-  </p>
+<!-- Warning Sign -->
+<div class="warning-sign mx-5 mt-4">
+    <div class="bg-orange-100 border-l-4 border-orange-500 rounded-2xl p-4">
+        <div class="flex items-center">
+            <div class="bg-orange-500/10 p-2 rounded-xl">
+                <i class="fas fa-exclamation-triangle text-orange-500"></i>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-orange-800 font-semibold">Device Offline</h3>
+                <p class="text-orange-700 text-sm">Please check your device connection.</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div id="avatar-container" class="m-5 p-2 bg-white rounded-xl shadow-lg flex justify-center items-center">
+<!-- Avatar Container -->
+<div id="avatar-container" class="mx-5 mt-4 overflow-hidden bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl border border-gray-100">
     <iframe src="/layout/avatars.php" frameborder="0" width="100%" style="height: 18vh; max-height: 230px; display: block;"></iframe>
 </div>
 
+<!-- Metrics Grid -->
+<div class="grid grid-cols-3 gap-3 mx-5 mt-4">
+    <!-- Temperature Card -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-3 relative overflow-hidden group hover:shadow-lg transition-all">
+        <div class="flex flex-col h-full">
+            <!-- Header -->
+            <div class="flex items-center gap-2 mb-2">
+                <div class="bg-blue-100 w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-temperature-high text-blue-600 text-sm"></i>
+                </div>
+                <span class="text-xs font-medium text-gray-500">Temp</span>
+            </div>
+            
+            <!-- Value -->
+            <div class="flex items-baseline gap-1">
+                <span class="text-2xl font-bold text-blue-600" id="data1">0</span>
+                <span class="text-sm font-semibold text-blue-400">°C</span>
+            </div>
 
-<div class="m-5 mb-6 grid grid-cols-3 gap-5">
-  <div class="bg-white shadow-md rounded-3xl p-5">
-    <div class="flex justify-between items-center md:justify-center md:gap-2">
-      <span class="text-3xl md:text-5xl font-bold text-blue-500" id="data1">0</span>
-      <span class="text-2xl md:text-4xl font-bold text-blue-500">°C</span>
+            <!-- Status -->
+            <div class="flex items-center gap-1.5 mt-2">
+                <i class="fas fa-check-circle text-green-500 text-sm" id="icon-status1"></i>
+                <span class="text-[10px] text-gray-500">Normal</span>
+            </div>
+        </div>
     </div>
-    <i class="fas fa-check-circle text-2xl mt-1 mb-2 text-green-600" id="icon-status1"></i>
-    <div class="grid items-center text-xs font-bold text-gray-700">Temp Status</div>
-  </div>
-  <div class="bg-white shadow-md rounded-3xl p-5">
-    <div class="flex justify-between items-center md:justify-center md:gap-2">
-      <span class="text-3xl md:text-5xl font-bold text-green-600" id="data2">0</span>
-      <span class="text-2xl md:text-4xl font-bold text-green-600">%</span>
+
+    <!-- Humidity Card -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-3 relative overflow-hidden group hover:shadow-lg transition-all">
+        <div class="flex flex-col h-full">
+            <!-- Header -->
+            <div class="flex items-center gap-2 mb-2">
+                <div class="bg-green-100 w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-droplet text-green-600 text-sm"></i>
+                </div>
+                <span class="text-xs font-medium text-gray-500">Humid</span>
+            </div>
+            
+            <!-- Value -->
+            <div class="flex items-baseline gap-1">
+                <span class="text-2xl font-bold text-green-600" id="data2">0</span>
+                <span class="text-sm font-semibold text-green-400">%</span>
+            </div>
+
+            <!-- Status -->
+            <div class="flex items-center gap-1.5 mt-2">
+                <i class="fas fa-check-circle text-green-500 text-sm" id="icon-status2"></i>
+                <span class="text-[10px] text-gray-500">Good</span>
+            </div>
+        </div>
     </div>
-    <i class="fas fa-check-circle text-2xl mt-1 mb-2 text-green-600" id="icon-status2"></i>
-    <div class="grid items-center text-xs font-bold text-gray-700">Humidity Status</div>
-  </div>
-  <div class="bg-white shadow-md rounded-3xl p-5">
-    <div class="flex justify-between items-center md:justify-center md:gap-2">
-      <span class="text-3xl md:text-5xl font-bold text-yellow-500" id="data3">0</span>
-      <span class="text-2xl md:text-4xl font-bold text-yellow-500">%</span>
+
+    <!-- Soil Status Card -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-3 relative overflow-hidden group hover:shadow-lg transition-all">
+        <div class="flex flex-col h-full">
+            <!-- Header -->
+            <div class="flex items-center gap-2 mb-2">
+                <div class="bg-yellow-100 w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-seedling text-yellow-600 text-sm"></i>
+                </div>
+                <span class="text-xs font-medium text-gray-500">Soil</span>
+            </div>
+            
+            <!-- Value -->
+            <div class="flex items-baseline gap-1">
+                <span class="text-2xl font-bold text-yellow-600" id="data3">0</span>
+                <span class="text-sm font-semibold text-yellow-400">%</span>
+            </div>
+
+            <!-- Status -->
+            <div class="flex items-center gap-1.5 mt-2">
+                <i class="fas fa-check-circle text-green-500 text-sm" id="icon-status3"></i>
+                <span class="text-[10px] text-gray-500">Good</span>
+            </div>
+        </div>
     </div>
-    <i class="fas fa-check-circle text-2xl mt-1 mb-2 text-green-600" id="icon-status3"></i>
-    <div class="grid items-center text-xs font-bold text-gray-700">Soil Status</div>
-  </div>
 </div>
 
-<div id="weather-container" class="m-5 rounded-3xl p-2 flex justify-center items-center text-white text-center" style="height: 50px; background: linear-gradient(to right, #ccc, #fff);">
-  <i id="weather-icon" class="fas fa-cloud text-xl mr-2"></i>
-  <span class="text-sm font-bold" id="weather-text">Loading...</span>
+<!-- Weather Container -->
+<div id="weather-container" class="mx-5 mt-4 rounded-2xl shadow-sm bg-gradient-to-r from-blue-500 to-blue-600">
+    <div class="px-4 py-3 flex items-center justify-between text-white">
+        <div class="flex items-center gap-3">
+            <div class="bg-white/20 p-2 rounded-xl">
+                <i id="weather-icon" class="fas fa-cloud text-xl"></i>
+            </div>
+            <div>
+                <div class="text-xs opacity-80">Current Weather</div>
+                <div class="font-semibold" id="weather-text">Loading...</div>
+            </div>
+        </div>
+        <i class="fas fa-location-dot opacity-60"></i>
+    </div>
 </div>
 
-<div id="water-tank-container" class="relative mx-auto overflow-hidden bg-gray-100 rounded-3xl">
-  <svg id="svg-container" xmlns="http://www.w3.org/2000/svg" class="absolute top-0 left-0 w-full h-full">
-    <path id="wave-path" class="fill-blue-500"></path>
-  </svg>
-  <div id="water-text" class="absolute inset-0 flex items-center justify-center text-sm font-bold text-blue-500">
-    <i class="fas fa-tint mr-2"></i>
-    <span id="water-percentage"></span>
-  </div>
+<!-- Water Tank Container -->
+<div id="water-tank-container" class="relative mx-5 mt-4 overflow-hidden bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl border border-blue-200">
+    <svg id="svg-container" xmlns="http://www.w3.org/2000/svg" class="absolute top-0 left-0 w-full h-full">
+        <defs>
+            <linearGradient id="waveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color: #60A5FA; stop-opacity: 0.8"/>
+                <stop offset="100%" style="stop-color: #3B82F6; stop-opacity: 0.9"/>
+            </linearGradient>
+        </defs>
+        <path id="wave-path" fill="url(#waveGradient)"></path>
+    </svg>
+    <div id="water-text" class="absolute inset-0 flex items-center justify-center">
+        <div class="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl shadow-sm flex items-center gap-2">
+            <i class="fas fa-tint text-blue-500"></i>
+            <span class="font-medium text-blue-700" id="water-percentage">--</span>
+        </div>
+    </div>
 </div>
 
-<div class="m-5 bg-white rounded-3xl shadow-lg">
-  <div class="bg-green-500 text-white rounded-t-3xl px-3 py-2 w-full text-center flex justify-center items-center">
-    <i class="fas fa-star text-yellow-300 mr-2"></i> 
-    <p class="text-sm md:text-base font-bold">Latest Articles</p>
-  </div>
-  
-  <div class="p-5">
-    <p class="text-sm md:text-lg text-gray-700 font-bold leading-relaxed"><?php echo htmlspecialchars($articleTitle); ?></p>  
-    <p class="text-sm md:text-lg text-gray-700 leading-relaxed"><?php echo htmlspecialchars($excerpt); ?></p>
-    <a class="text-sm md:text-lg text-gray-700 leading-relaxed underline" href="<?php echo htmlspecialchars($readMoreLink); ?>">Read More</a>
-  </div>
+<!-- Latest Article Card -->
+<div class="mx-5 mt-4 bg-white rounded-2xl border border-gray-100 overflow-hidden">
+    <div class="bg-gradient-to-r from-green-500 to-green-600 px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="bg-white/20 p-2 rounded-xl">
+                <i class="fas fa-newspaper text-white"></i>
+            </div>
+            <div class="text-white">
+                <div class="text-xs opacity-80">Latest Update</div>
+                <div class="font-semibold">Featured Article</div>
+            </div>
+        </div>
+        <i class="fas fa-star text-yellow-300"></i>
+    </div>
+    
+    <div class="p-4">
+        <h3 class="font-bold text-gray-800 mb-2"><?php echo htmlspecialchars($articleTitle); ?></h3>
+        <p class="text-gray-600 text-sm leading-relaxed mb-3"><?php echo htmlspecialchars($excerpt); ?></p>
+        <a href="<?php echo htmlspecialchars($readMoreLink); ?>" class="inline-flex items-center gap-2 text-green-600 hover:text-green-700 font-medium text-sm group">
+            Read More 
+            <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+        </a>
+    </div>
 </div>
 
-<div class="invisible h-32"></div>
-<div class="bg-white rounded-3xl p-2 mx-10 mt-5 shadow-md text-xs fixed bottom-28 left-0 right-0">
-  <span>Last update : </span>
-  <span id="last-waktu">Connecting to IoT..</span>
+<!-- Status Bar -->
+<div class="h-32"></div>
+<div class="fixed bottom-28 inset-x-0 px-5">
+    <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-3 border border-gray-100 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-2 text-sm">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span class="text-gray-500">Last update:</span>
+            <span id="last-waktu" class="font-medium">Connecting to IoT..</span>
+        </div>
+        <i class="fas fa-signal text-green-500"></i>
+    </div>
 </div>
 
 <?php
