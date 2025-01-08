@@ -5,73 +5,105 @@ require_once './layout/header.php';
 require_once './layout/sidebar.php';
 ?>
 
-<div class="flex flex-col items-center min-h-screen pt-2">
-    <!-- Profile Image Section (Rounded) -->
-    <div id="avatar-container" class="p-2 bg-white rounded-full shadow-sm flex justify-center items-center mb-2">
-        <img src="assets/profile.webp" alt="Profile Image" class="w-24 h-24 rounded-full border-2 border-gray-300">
+<div class="flex flex-col items-center min-h-screen pt-6">
+    <!-- Profile Header -->
+    <div class="w-full max-w-md mb-6">
+        <div class="flex flex-col items-center">
+            <!-- Profile Image -->
+            <div class="relative mb-4">
+                <div class="p-1 rounded-full bg-gradient-to-r from-blue-500 to-purple-500">
+                    <img src="assets/profile.webp" alt="Profile Image" class="w-24 h-24 rounded-full object-cover border-4 border-white">
+                </div>
+            </div>
+
+            <!-- User Info -->
+            <div class="text-center mb-4">
+                <h2 class="text-xl font-bold text-gray-800"><?= $_SESSION['login']['username'] ?></h2>
+                <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-xs font-medium inline-block mt-1">Active User</span>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="flex space-x-3">
+                <button data-feature-not-ready class="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold py-2 px-6 rounded-xl hover:shadow-lg transition duration-200 text-sm flex items-center gap-2">
+                    <i class="fas fa-user-edit"></i>
+                    Edit Profile
+                </button>
+                <button id="openChangePassModal" class="bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold py-2 px-6 rounded-xl hover:shadow-lg transition duration-200 text-sm flex items-center gap-2">
+                    <i class="fas fa-key"></i>
+                    Change Pass
+                </button>
+            </div>
+        </div>
     </div>
 
-    <!-- User Info Section (Reduced Margin) -->
-    <div class="text-center mb-4">
-        <h2 class="text-lg font-bold text-gray-700"><?= $_SESSION['login']['username'] ?></h2>
-        <p class="text-sm text-gray-500">User</p>
+    <!-- Feature Cards -->
+    <div class="w-full max-w-md space-y-3 px-4">
+        <!-- Devices List -->
+        <button data-feature-not-ready class="w-full bg-white/60 backdrop-blur-sm hover:bg-white text-gray-700 font-semibold p-4 rounded-2xl flex items-center shadow-sm hover:shadow transition duration-200 group">
+            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
+                <i class="fas fa-mobile-alt text-blue-500"></i>
+            </div>
+            <span class="flex-1 text-left">Devices List</span>
+            <i class="fas fa-chevron-right text-gray-400"></i>
+        </button>
+
+        <!-- Manual Watering -->
+        <button data-feature-not-ready class="w-full bg-white/60 backdrop-blur-sm hover:bg-white text-gray-700 font-semibold p-4 rounded-2xl flex items-center shadow-sm hover:shadow transition duration-200 group">
+            <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-4">
+                <i class="fas fa-tint text-green-500"></i>
+            </div>
+            <span class="flex-1 text-left">Manual Watering</span>
+            <i class="fas fa-chevron-right text-gray-400"></i>
+        </button>
+
+        <!-- AI Configuration -->
+        <button data-feature-not-ready class="w-full bg-white/60 backdrop-blur-sm hover:bg-white text-gray-700 font-semibold p-4 rounded-2xl flex items-center shadow-sm hover:shadow transition duration-200 group">
+            <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mr-4">
+                <i class="fas fa-robot text-purple-500"></i>
+            </div>
+            <span class="flex-1 text-left">AI Configuration</span>
+            <i class="fas fa-chevron-right text-gray-400"></i>
+        </button>
+
+        <!-- Customer Support -->
+        <button data-feature-not-ready class="w-full bg-white/60 backdrop-blur-sm hover:bg-white text-gray-700 font-semibold p-4 rounded-2xl flex items-center shadow-sm hover:shadow transition duration-200 group">
+            <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center mr-4">
+                <i class="fas fa-headset text-yellow-500"></i>
+            </div>
+            <span class="flex-1 text-left">Customer Support</span>
+            <i class="fas fa-chevron-right text-gray-400"></i>
+        </button>
+
+        <!-- Request Replacement -->
+        <button data-feature-not-ready class="w-full bg-white/60 backdrop-blur-sm hover:bg-white text-gray-700 font-semibold p-4 rounded-2xl flex items-center shadow-sm hover:shadow transition duration-200 group">
+            <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center mr-4">
+                <i class="fas fa-exchange-alt text-red-500"></i>
+            </div>
+            <span class="flex-1 text-left">Request a Replacement</span>
+            <i class="fas fa-chevron-right text-gray-400"></i>
+        </button>
     </div>
 
-    <!-- Action Buttons (Styled with Blue and Green) -->
-    <div class="flex space-x-2 mb-6">
-        <button data-feature-not-ready class="bg-blue-500 text-white font-semibold py-1 px-4 rounded-full hover:bg-blue-600 transition duration-200 shadow-sm text-sm flex items-center">
-            <i class="fas fa-user-edit mr-1"></i> Edit Profile
-        </button>
-        <button id="openChangePassModal" class="bg-green-500 text-white font-semibold py-1 px-4 rounded-full hover:bg-green-600 transition duration-200 shadow-sm text-sm flex items-center">
-            <i class="fas fa-key mr-1"></i> Change Pass
-        </button>
+    <!-- Logout Buttons -->
+    <div class="w-full max-w-md px-4 mt-6 mb-2">
+        <div class="grid grid-cols-2 gap-3">
+            <a href="auth/logout" class="bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition duration-200 text-sm flex items-center justify-center gap-2">
+                <i class="fas fa-sign-out-alt"></i>
+                LOG OUT
+            </a>
+            <a href="auth/logoutall" class="bg-gradient-to-r from-gray-700 to-gray-800 text-white font-semibold py-3 rounded-xl hover:shadow-lg transition duration-200 text-sm flex items-center justify-center gap-2">
+                <i class="fas fa-power-off"></i>
+                LOGOUT ALL
+            </a>
+        </div>
     </div>
 
-    <!-- Feature Not Ready Buttons -->
-    <div class="flex justify-center mt-4 w-full px-4">
-        <button data-feature-not-ready class="bg-white text-gray-700 font-semibold py-3 w-full max-w-md rounded-2xl flex justify-between items-center shadow-lg hover:shadow-xl transition duration-200 px-6">
-            <span>Devices List</span>
-            <i class="fas fa-chevron-right"></i>
-        </button>
-    </div>
-    <div class="flex justify-center mt-4 w-full px-4">
-        <button data-feature-not-ready class="bg-white text-gray-700 font-semibold py-3 w-full max-w-md rounded-2xl flex justify-between items-center shadow-lg hover:shadow-xl transition duration-200 px-6">
-            <span>Manual Watering</span>
-            <i class="fas fa-chevron-right"></i>
-        </button>
-    </div>
-    <div class="flex justify-center mt-4 w-full px-4">
-        <button data-feature-not-ready class="bg-white text-gray-700 font-semibold py-3 w-full max-w-md rounded-2xl flex justify-between items-center shadow-lg hover:shadow-xl transition duration-200 px-6">
-            <span>AI Configuration</span>
-            <i class="fas fa-chevron-right"></i>
-        </button>
-    </div>
-    <div class="flex justify-center mt-4 w-full px-4">
-        <button data-feature-not-ready class="bg-white text-gray-700 font-semibold py-3 w-full max-w-md rounded-2xl flex justify-between items-center shadow-lg hover:shadow-xl transition duration-200 px-6">
-            <span>Customer Support</span>
-            <i class="fas fa-chevron-right"></i>
-        </button>
-    </div>
-    <div class="flex justify-center mt-4 w-full px-4">
-        <button data-feature-not-ready class="bg-white text-gray-700 font-semibold py-3 w-full max-w-md rounded-2xl flex justify-between items-center shadow-lg hover:shadow-xl transition duration-200 px-6">
-            <span>Request a Replacement</span>
-            <i class="fas fa-chevron-right"></i>
-        </button>
-    </div>
-
-    <!-- LOG OUT Button -->
-    <div class="flex justify-center mt-5 w-full px-4 space-x-3">
-        <a href="auth/logout" class="bg-red-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-red-600 transition duration-200 shadow-md text-sm flex items-center justify-center w-auto">
-            LOG OUT
-        </a>
-        <a href="auth/logoutall" class="bg-gray-800 text-white font-semibold py-2 px-4 rounded-full hover:bg-gray-900 transition duration-200 shadow-md text-sm flex items-center justify-center w-auto">
-            LOGOUT ALL DEVICE
-        </a>
-    </div>
-
-    <!-- Version Text -->
-    <div class="flex justify-center mt-2">
-        <p class="text-gray-500 italic text-xs">Botaniq Alpha Version 2.0</p>
+    <!-- Version Info -->
+    <div class="mt-4 mb-6">
+        <div class="px-4 py-1.5 rounded-full text-gray-500 text-xs flex items-center gap-2">
+            <i class="fas fa-code-branch text-blue-500"></i>
+            Botaniq Alpha Version 2.0
+        </div>
     </div>
 </div>
 
