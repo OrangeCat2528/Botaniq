@@ -20,21 +20,46 @@ $auth->refreshTokenIfNeeded();
 
 $page = basename($_SERVER['PHP_SELF'], ".php");
 $headerTitles = [
-    'ai' => 'Botaniq | AI',
-    'dashboard' => 'Botaniq | Home',
-    'articles' => 'Botaniq | Articles',
-    'table' => 'Botaniq | Data',
-    'charts' => 'Botaniq | Charts',
-    'viewarticles' => 'Botaniq SuperApp',
+    'ai' => 'AI Assistant',
+    'dashboard' => 'My Garden',
+    'articles' => 'Knowledge Base',
+    'table' => 'Garden Data',
+    'charts' => 'Analytics',
+    'viewarticles' => 'Article View',
     'profile' => 'My Profile'
 ];
 
-$headerTitle = $headerTitles[$page] ?? "Botaniq SuperApp";
+$headerTitle = $headerTitles[$page] ?? "Botaniq";
 ?>
 
-<div class="text-center py-5 mb-5 shadow-md text-gray-600 bg-white relative">
-    <button id="sidebar-toggle" class="absolute left-5 items-center fa fa-user-circle text-gray text-3xl"></button>
-    <img src="/assets/img/superapp-login-logo-only.png" alt="Botaniq SuperApp Logo" class="inline-block w-8 h-8" id="header-icon">
-    <span class="font-extrabold text-lg ml-1"><?= htmlspecialchars($headerTitle) ?></span>
-    <button id="sidebar-notif" class="absolute right-5 items-center fa fa-bell text-gray text-3xl"></button>
-</div>
+<!-- Header -->
+<header class="bg-white relative">
+    <!-- Top Header -->
+    <div class="flex items-center justify-between px-5 py-4">
+        <!-- Left Menu Button -->
+        <button id="sidebar-toggle" class="w-10 h-10 flex items-center justify-center rounded-xl text-gray-600 hover:bg-gray-50">
+            <i class="fas fa-bars text-xl"></i>
+        </button>
+
+        <!-- Center Logo and Title -->
+        <div class="flex items-center gap-2">
+            <div class="relative">
+                <div class="absolute inset-0 bg-green-100 rounded-lg rotate-45"></div>
+                <img src="/assets/img/superapp-login-logo-only.png" alt="Botaniq SuperApp Logo" 
+                     class="w-8 h-8 relative z-10" id="header-icon">
+            </div>
+            <h1 class="font-bold text-gray-700">
+                <?= htmlspecialchars($headerTitle) ?>
+            </h1>
+        </div>
+
+        <!-- Right Notification Button -->
+        <button id="sidebar-notif" class="w-10 h-10 flex items-center justify-center rounded-xl text-gray-600 hover:bg-gray-50 relative">
+            <i class="fas fa-bell text-xl"></i>
+            <div class="absolute top-1 right-1.5 w-2 h-2 bg-red-500 rounded-full"></div>
+        </button>
+    </div>
+</header>
+
+<!-- Subtle Shadow Line -->
+<div class="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>

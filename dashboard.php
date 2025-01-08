@@ -38,8 +38,8 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <i class="fas fa-exclamation-triangle text-orange-500"></i>
             </div>
             <div class="ml-3">
-                <h3 class="text-orange-800 font-semibold">Device Offline</h3>
-                <p class="text-orange-700 text-sm">Please check your device connection.</p>
+                <h3 class="text-orange-800 font-semibold text-left">Device Offline</h3>
+                <p class="text-orange-700 text-sm text-left">Please check your device connection.</p>
             </div>
         </div>
     </div>
@@ -200,6 +200,8 @@ if ($result && mysqli_num_rows($result) > 0) {
         <i class="fas fa-signal text-green-500"></i>
     </div>
 </div>
+
+<div class="h-24"></div>
 
 <?php
 require_once './layout/bottom.php';
