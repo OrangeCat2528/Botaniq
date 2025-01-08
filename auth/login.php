@@ -200,7 +200,7 @@ if (isset($_POST['submit'])) {
 
           <button type="button" class="bg-white border border-gray-300 text-gray-600 font-bold py-2 px-6 rounded-full focus:outline-none focus:shadow-outline flex items-center justify-center transition duration-200 ease-in-out w-full">
             <i class="fab fa-google text-red-500 mr-2"></i>
-            <span>Login with Google</span>
+            <span>Continue with Google</span>
           </button>
 
           <a class="inline-block align-baseline font-bold text-sm text-green-600 hover:text-green-700 mt-2" href="#">
