@@ -1,12 +1,49 @@
+// CSS
+const waterTankStyles = `
+@keyframes wave-back-and-forth {
+    0% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(-25%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+#wave-path {
+    animation: wave-back-and-forth 4s ease-in-out infinite;
+    fill: url(#waveGradient);
+    transform-origin: center;
+    will-change: transform;
+}
+
+#svg-container {
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+    width: 200%;
+    height: 100%;
+}
+`;
+
+// Add styles to document
+const styleSheet = document.createElement("style");
+styleSheet.innerText = waterTankStyles;
+document.head.appendChild(styleSheet);
+
+// JavaScript Controller
 class WaterTankController {
     constructor() {
         this.waterTank = document.getElementById('water-tank-container');
+        this.svgContainer = document.getElementById('svg-container');
         this.wavePath = document.getElementById('wave-path');
         this.waterText = document.getElementById('water-text');
         this.weatherContainer = document.getElementById('weather-container');
         
         this.waterLevel = 0;
-        this.currentWaterLevel = 0; // For smooth animation
+        this.currentWaterLevel = 0;
         this.animationFrame = null;
         
         this.setupEventListeners();
@@ -18,13 +55,11 @@ class WaterTankController {
     }
 
     updateWaterLevel(targetLevel) {
-        // Cancel any existing animation
         if (this.animationFrame) {
             cancelAnimationFrame(this.animationFrame);
         }
 
         const animate = () => {
-            // Smooth transition to target level
             const diff = targetLevel - this.currentWaterLevel;
             const step = diff * 0.1;
 
@@ -41,51 +76,45 @@ class WaterTankController {
         this.animationFrame = requestAnimationFrame(animate);
     }
 
-    getWaterLevelStatus(level) {
-        if (level <= 20) return { color: 'red', text: 'Low' };
-        if (level <= 40) return { color: 'orange', text: 'Warning' };
-        return { color: 'green', text: 'Good' };
-    }
-
     updateWaterTankSize() {
         const weatherWidth = this.weatherContainer.offsetWidth;
-        this.waterTank.style.width = `${weatherWidth}px`;
-
         const containerHeight = this.weatherContainer.offsetHeight;
+
+        // Update container dimensions
+        this.waterTank.style.width = `${weatherWidth}px`;
         this.waterTank.style.height = `${containerHeight}px`;
 
         // Calculate wave parameters
         const waveHeight = (containerHeight * this.currentWaterLevel) / 100;
         const waveY = containerHeight - waveHeight;
-        const amplitude = Math.min(10, waveHeight * 0.1); // Dynamic amplitude based on water level
 
-        // Create wave path with multiple curves for more natural look
+        // Create a more natural looking wave path
+        // Note: We're making the path wider because of the CSS animation
+        const width = weatherWidth * 2; // Double width for animation
         const d = `
             M0 ${waveY}
-            Q ${weatherWidth * 0.2} ${waveY - amplitude} ${weatherWidth * 0.4} ${waveY}
-            T ${weatherWidth * 0.8} ${waveY}
-            T ${weatherWidth} ${waveY}
+            Q ${width * 0.25} ${waveY - 10}, ${width * 0.5} ${waveY}
+            T ${width} ${waveY}
             V ${containerHeight}
             H 0
             Z
         `;
         this.wavePath.setAttribute('d', d);
 
-        // Update water level text and status
-        const status = this.getWaterLevelStatus(this.currentWaterLevel);
+        // Update water percentage text
         const waterPercentage = document.getElementById('water-percentage');
         if (waterPercentage) {
-            waterPercentage.textContent = `${Math.round(this.currentWaterLevel)}%`;
-            waterPercentage.style.color = `var(--color-${status.color}-600)`;
-        }
+            const level = Math.round(this.currentWaterLevel);
+            waterPercentage.textContent = `${level}%`;
 
-        // Update text color based on water level
-        const textTop = this.waterText.offsetTop + this.waterText.offsetHeight / 2;
-        if (textTop >= waveY) {
-            this.waterText.classList.replace('text-blue-500', 'text-white');
-            this.waterText.classList.replace('text-blue-700', 'text-white');
-        } else {
-            this.waterText.classList.replace('text-white', 'text-blue-700');
+            // Update color based on level
+            if (level <= 20) {
+                waterPercentage.className = 'font-medium text-red-600';
+            } else if (level <= 40) {
+                waterPercentage.className = 'font-medium text-orange-600';
+            } else {
+                waterPercentage.className = 'font-medium text-blue-600';
+            }
         }
     }
 
@@ -100,8 +129,6 @@ class WaterTankController {
                     this.waterLevel = newLevel;
                     this.updateWaterLevel(newLevel);
                 }
-            } else {
-                console.error('Watertank data not found in the response:', data);
             }
         } catch (error) {
             console.error('Error fetching watertank data:', error);
@@ -109,10 +136,7 @@ class WaterTankController {
     }
 
     startUpdates() {
-        // Initial fetch
         this.fetchWaterTankData();
-        
-        // Regular updates
         setInterval(() => this.fetchWaterTankData(), 5000);
     }
 }
