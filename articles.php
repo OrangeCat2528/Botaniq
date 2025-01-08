@@ -85,11 +85,11 @@ if ($result && mysqli_num_rows($result) > 0) {
                         <span class="text-xs font-medium text-gray-500">Botaniq Guide</span>
                     </div>
 
-                    <h3 class="font-bold text-gray-800 mb-2 text-lg leading-snug">
+                    <h3 class="font-bold text-gray-800 mb-2 text-lg leading-snug text-left">
                         <?php echo htmlspecialchars($articleTitle); ?>
                     </h3>
                     
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4 text-left">
                         <?php echo htmlspecialchars($excerpt); ?>
                     </p>
 
