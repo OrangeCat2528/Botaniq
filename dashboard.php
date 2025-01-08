@@ -136,8 +136,8 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <i id="weather-icon" class="fas fa-cloud text-xl"></i>
             </div>
             <div>
-                <div class="text-xs opacity-80">Current Weather</div>
-                <div class="font-semibold" id="weather-text">Loading...</div>
+                <div class="text-xs opacity-80 text-left">Current Weather</div>
+                <div class="font-semibold text-left" id="weather-text">Loading...</div>
             </div>
         </div>
         <i class="fas fa-location-dot opacity-60"></i>
