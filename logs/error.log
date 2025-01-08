@@ -1,0 +1,1 @@
+An established connection was aborted by the software in your host machinephp_network_getaddresses: getaddrinfo for gardener.rel.blue failed: No such host is known. SQLSTATE[HY000] [2006] MySQL server has gone away

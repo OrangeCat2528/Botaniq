@@ -74,126 +74,138 @@ if (isset($_POST['submit'])) {
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Botaniq SuperApp - Connect Pot</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botaniq SuperApp - Connect Pot</title>
 
-  <link rel="stylesheet" href="/assets/tailwind.css">
-  <link href="/style/style.css" rel="stylesheet">
-  <link href="/assets/fontawesome/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/tailwind.css">
+    <link href="/style/style.css" rel="stylesheet">
+    <link href="/assets/fontawesome/css/all.css" rel="stylesheet">
 
-  <style>
-    @font-face {
-      font-family: 'Montserrat';
-      src: url('/assets/montserrat.woff2') format('woff2');
-      font-weight: 100 900;
-      font-style: normal;
-    }
-    
-    input[type="text"] {
-      background-color: #f3f4f6; /* Light gray background */
-      border: 2px solid #e5e7eb; /* Light gray border */
-      border-radius: 8px;
-    }
+    <style>
+        @font-face {
+            font-family: 'Montserrat';
+            src: url('/assets/montserrat.woff2') format('woff2');
+            font-weight: 100 900;
+            font-style: normal;
+        }
 
-    input[type="text"]:focus {
-      background-color: white;
-      border-color: #10b981; /* Green border when focused */
-    }
-  </style>
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .otp-input {
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .otp-input:focus {
+            background-color: white;
+            border-color: #22c55e;
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
+        }
+
+        .otp-input.filled {
+            border-color: #22c55e;
+            background-color: #f0fdf4;
+        }
+    </style>
 </head>
 
-<body class="flex flex-col h-screen text-center scroll-smooth bg-white">
+<body class="flex flex-col h-screen text-center scroll-smooth bg-gradient-to-b from-white to-green-50">
+    <!-- Back Button -->
+    <a href="auth/logout" class="absolute top-6 left-6 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm border border-gray-100">
+        <i class="fas fa-arrow-left text-gray-600"></i>
+    </a>
 
-  <div class="flex-1 flex flex-col justify-center items-center">
-    <div class="text-center">
-      <div class="fas fa-leaf text-green-600 text-8xl"></div>
-      <div class="mt-0 text-gray-600 px-5">
-        <span class="font-extrabold text-3xl">Connect Device</span>
-        <p class="text-[15px] text-slate-500 description-text">Enter the 4-digit device code that was included in the package.</p>
-      </div>
+    <div class="flex-1 flex flex-col justify-center items-center px-4">
+        <!-- Icon Section -->
+        <div class="mb-8 relative">
+            <div class="absolute inset-0 bg-green-100 rounded-full scale-150 opacity-20"></div>
+            <div class="relative float-animation">
+                <div class="fas fa-leaf text-green-500 text-7xl mb-2"></div>
+                <div class="absolute -right-1 -top-1 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-plus text-green-500 text-xs"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Title Section -->
+        <div class="mb-12 text-center">
+            <h1 class="font-bold text-2xl text-gray-800 mb-2">Connect Your Device</h1>
+            <p class="text-gray-500 max-w-xs mx-auto">Enter the 4-digit device code that was included in your Botaniq package</p>
+        </div>
+
+        <!-- OTP Form -->
+        <div class="w-full max-w-sm">
+            <form id="otp-form" method="POST" action="" class="space-y-8">
+                <!-- OTP Inputs -->
+                <div class="flex items-center justify-center gap-3">
+                    <input name="otp_1" type="text" class="otp-input w-14 h-16 text-center text-2xl font-bold text-gray-700" pattern="\d*" maxlength="1" required />
+                    <input name="otp_2" type="text" class="otp-input w-14 h-16 text-center text-2xl font-bold text-gray-700" maxlength="1" required />
+                    <input name="otp_3" type="text" class="otp-input w-14 h-16 text-center text-2xl font-bold text-gray-700" maxlength="1" required />
+                    <input name="otp_4" type="text" class="otp-input w-14 h-16 text-center text-2xl font-bold text-gray-700" maxlength="1" required />
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" name="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-200 flex items-center justify-center gap-2">
+                    <i class="fas fa-link"></i>
+                    Connect Device
+                </button>
+            </form>
+
+            <!-- Help Text -->
+            <div class="mt-6 flex justify-center items-center gap-2 text-gray-500">
+                <i class="fas fa-question-circle"></i>
+                <span class="text-sm">Need help? <a href="#" class="text-green-600 hover:text-green-700 font-medium">Contact Support</a></span>
+            </div>
+        </div>
     </div>
 
-  <!-- OTP VERIFICATION SECTION -->
-  <div class="w-full max-w-sm">
-      <div class="max-w-md mx-auto text-center bg-white px-2 sm:px-8 py-8"> <!-- Removed rounded-xl here -->
-        <form id="otp-form" method="POST" action="" class="px-8 pt-6 pb-8 mb-4 mx-5">
-          <div class="flex items-center justify-center gap-3 mb-4">
-            <input
-              name="otp_1"
-              type="text"
-              class="w-14 h-14 text-center text-2xl font-extrabold text-gray-600 appearance-none rounded p-4 outline-none focus:bg-white focus:ring-2 focus:ring-green-200"
-              pattern="\d*" maxlength="1" required />
-            <input
-              name="otp_2"
-              type="text"
-              class="w-14 h-14 text-center text-2xl font-extrabold text-gray-600 appearance-none rounded p-4 outline-none focus:bg-white focus:ring-2 focus:ring-green-200"
-              maxlength="1" required />
-            <input
-              name="otp_3"
-              type="text"
-              class="w-14 h-14 text-center text-2xl font-extrabold text-gray-600 appearance-none rounded p-4 outline-none focus:bg-white focus:ring-2 focus:ring-green-200"
-              maxlength="1" required />
-            <input
-              name="otp_4"
-              type="text"
-              class="w-14 h-14 text-center text-2xl font-extrabold text-gray-600 appearance-none rounded p-4 outline-none focus:bg-white focus:ring-2 focus:ring-green-200"
-              maxlength="1" required />
-          </div>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <?php if (isset($message)) echo $message; ?>
 
-          <div class="max-w-[260px] mx-auto mt-4">
-            <button type="submit" name="submit"
-              class="w-full inline-flex justify-center whitespace-nowrap rounded-lg bg-green-600 px-3.5 py-2.5 text-sm font-medium text-white shadow-sm shadow-green-950/10 hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-300 focus-visible:outline-none focus-visible:ring focus-visible:ring-green-300 transition-colors duration-150">
-              Connect Device
-            </button>
-          </div>
-        </form>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('otp-form');
+            const inputs = [...form.querySelectorAll('input[type=text]')];
 
-        <div class="text-sm text-slate-500 mt-4">Didn't receive the code? <a class="font-medium text-green-600 hover:text-green-700" href="#">Contact Us</a></div>
-      </div>
+            const handleInput = (e, index) => {
+                const input = e.target;
+                
+                // Add/remove filled class
+                if (input.value) {
+                    input.classList.add('filled');
+                } else {
+                    input.classList.remove('filled');
+                }
 
-      <p class="text-center text-gray-600 text-xs mt-4">
-        &copy;2024 Botaniq. All rights reserved.
-      </p>
-    </div>
-  </div>
+                // Handle navigation
+                if (input.value && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            };
 
-  <!-- SweetAlert2 JS -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <?php if (isset($message)) echo $message; ?>
+            const handleKeydown = (e, index) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    setTimeout(() => inputs[index - 1].focus(), 0);
+                }
+            };
 
-  <!-- OTP form JavaScript handling -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById('otp-form');
-      const inputs = [...form.querySelectorAll('input[type=text]')];
-      const submit = form.querySelector('button[type=submit]');
-
-      const handleKeyDown = (e) => {
-        if (!/^[0-9]{1}$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete') {
-          e.preventDefault();
-        }
-
-        if (e.key === 'Delete' || e.key === 'Backspace') {
-          const index = inputs.indexOf(e.target);
-          if (index > 0) {
-            inputs[index - 1].focus();
-          }
-        }
-      };
-
-      const handleInput = (e) => {
-        const index = inputs.indexOf(e.target);
-        if (e.target.value && index < inputs.length - 1) {
-          inputs[index + 1].focus();
-        }
-      };
-
-      inputs.forEach(input => {
-        input.addEventListener('keydown', handleKeyDown);
-        input.addEventListener('input', handleInput);
-      });
-    });
-  </script>
+            inputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => handleInput(e, index));
+                input.addEventListener('keydown', (e) => handleKeydown(e, index));
+            });
+        });
+    </script>
 </body>
 </html>
