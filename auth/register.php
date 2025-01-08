@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
   <title>Botaniq SuperApp - Register</title>  
   
   <!-- Stylesheets -->  
-  <link rel="stylesheet" href="/assets/tailwind.css">  
+  <script src="https://cdn.tailwindcss.com"></script>
   <link href="/style/style.css" rel="stylesheet">  
   <link href="/assets/fontawesome/css/all.css" rel="stylesheet">  
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">  

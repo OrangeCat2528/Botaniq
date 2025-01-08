@@ -46,7 +46,7 @@ if (isset($_POST['submit'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Botaniq SuperApp - Login</title>
 
-  <link rel="stylesheet" href="/assets/tailwind.css">
+  <script src="https://cdn.tailwindcss.com"></script>
   <link href="/style/style.css" rel="stylesheet">
   <link href="/assets/fontawesome/css/all.css" rel="stylesheet">
 

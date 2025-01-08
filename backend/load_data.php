@@ -1,5 +1,6 @@
 <?php
 // linked_data.php
+require "../helper/connection.php";
 require "../helper/auth_helper.php";
 
 $auth = AuthHelper::getInstance();
@@ -7,6 +8,18 @@ $auth = AuthHelper::getInstance();
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
+
+function generateDummyData() {
+    return [
+        'id' => rand(100, 999),
+        'temp' => rand(200, 350) / 10,
+        'humidity' => rand(30, 90),
+        'soil' => rand(20, 70),
+        'watertank' => rand(50, 100),
+        'waktu' => date('Y-m-d H:i:s'),
+        'product_id' => 'DEMO'
+    ];
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (!$auth->isLogged()) {
@@ -26,21 +39,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         exit;
     }
 
-    // Generate dynamic dummy data for testing
-    $dummyData = [
-        'id' => rand(100, 999), // Random ID between 100 and 999
-        'temp' => rand(200, 350) / 10, // Random temperature between 20.0 and 35.0
-        'humidity' => rand(30, 90), // Random humidity between 30 and 90
-        'soil' => rand(20, 70), // Random soil moisture between 20 and 70
-        'watertank' => rand(50, 100), // Random water tank level between 50 and 100
-        'waktu' => date('Y-m-d H:i:s'), // Current timestamp
-        'product_id' => 'BBB' // Set to "BBB"
-    ];
+    $linked_id = $currentUser['linked_id'];
 
-    $auth->refreshTokenIfNeeded();
+    // Check if user is using DEMO account
+    if ($linked_id === 'DEMO') {
+        $auth->refreshTokenIfNeeded();
+        echo json_encode(generateDummyData());
+        exit;
+    }
 
-    // Returning dynamic dummy data
-    echo json_encode($dummyData);
+    // For non-DEMO users, proceed with database query
+    if ($connection) {
+        if ($linked_id !== null && $linked_id != 0) {
+            try {
+                $stmt = $connection->prepare("
+                    SELECT id, temp, humidity, soil, watertank, waktu, product_id 
+                    FROM datastream 
+                    WHERE product_id = ? 
+                    ORDER BY id DESC 
+                    LIMIT 1
+                ");
+                $stmt->bind_param("s", $linked_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $data = $result->fetch_assoc();
+                $stmt->close();
+
+                if ($data) {
+                    $auth->refreshTokenIfNeeded();
+                    echo json_encode($data);
+                } else {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'No data found for this device.'
+                    ]);
+                }
+            } catch (Exception $e) {
+                error_log("Data fetch error: " . $e->getMessage());
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Failed to fetch device data.'
+                ]);
+            }
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'No device linked to this user.'
+            ]);
+        }
+    } else {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Database connection failed.'
+        ]);
+    }
 } else {
     echo json_encode([
         'status' => 'error',
