@@ -5,6 +5,11 @@ const DEFAULT_FONT_OPTIONS = {
   family: 'Montserrat'
 };
 
+// Stats arrays to store historical data
+let tempHistory = [];
+let humidHistory = [];
+let soilHistory = [];
+
 // Elemen dan grafik
 const chartContexts = [
   document.getElementById('chart-1').getContext('2d'),
@@ -23,32 +28,90 @@ const charts = chartContexts.map((ctx, index) => createChart(ctx, chartConfigs[i
 // Variabel untuk menyimpan data terakhir yang diterima
 let lastData = null;
 
+// Function to calculate statistics
+function calculateStats(values) {
+    if (!values || values.length === 0) return { min: 0, max: 0, avg: 0 };
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const avg = (values.reduce((a, b) => a + b, 0) / values.length).toFixed(1);
+    return { min, max, avg };
+}
+
+// Function to update statistics display
+function updateStatsDisplay(type, value, stats) {
+    // Update current value
+    document.getElementById(`current-${type}`).textContent = `${value}${type === 'temp' ? '°C' : '%'}`;
+    
+    // Update min, max, avg
+    document.getElementById(`min-${type}`).textContent = `${stats.min}${type === 'temp' ? '°C' : '%'}`;
+    document.getElementById(`max-${type}`).textContent = `${stats.max}${type === 'temp' ? '°C' : '%'}`;
+    document.getElementById(`avg-${type}`).textContent = `Avg: ${stats.avg}${type === 'temp' ? '°C' : '%'}`;
+    
+    // Update timestamp
+    document.getElementById(`${type}-timestamp`).textContent = new Date().toLocaleTimeString();
+    
+    // Update status based on thresholds
+    const status = document.getElementById(`${type}-status`);
+    const thresholds = {
+        temp: [20, 40],
+        humid: [50, 80],
+        soil: [50, 80]
+    };
+    
+    const [min, max] = thresholds[type];
+    if (value >= min && value <= max) {
+        status.textContent = 'Normal';
+        status.className = 'font-medium text-green-500';
+    } else {
+        status.textContent = 'Warning';
+        status.className = 'font-medium text-yellow-500';
+    }
+}
+
 // Fungsi untuk memperbarui grafik
 function updateCharts(payload) {
-  // Periksa jika data baru berbeda dari data terakhir
-  if (JSON.stringify(payload) === JSON.stringify(lastData)) {
-    return; // Tidak ada perubahan data, tidak perlu memperbarui grafik
-  }
+    // Periksa jika data baru berbeda dari data terakhir
+    if (JSON.stringify(payload) === JSON.stringify(lastData)) {
+        return; // Tidak ada perubahan data, tidak perlu memperbarui grafik
+    }
 
-  lastData = payload; // Update data terakhir
+    lastData = payload; // Update data terakhir
 
-  const dataArrays = [
-    charts[0].data.datasets[0].data,
-    charts[1].data.datasets[0].data,
-    charts[2].data.datasets[0].data
-  ];
+    const dataArrays = [
+        charts[0].data.datasets[0].data,
+        charts[1].data.datasets[0].data,
+        charts[2].data.datasets[0].data
+    ];
 
-  const labelsArrays = [
-    charts[0].data.labels,
-    charts[1].data.labels,
-    charts[2].data.labels
-  ];
+    const labelsArrays = [
+        charts[0].data.labels,
+        charts[1].data.labels,
+        charts[2].data.labels
+    ];
 
-  updateChartDataAndLabels(dataArrays[0], labelsArrays[0], payload.temp);
-  updateChartDataAndLabels(dataArrays[1], labelsArrays[1], payload.humidity);
-  updateChartDataAndLabels(dataArrays[2], labelsArrays[2], payload.soil)
+    // Update data arrays and stats
+    if (payload.temp !== undefined) {
+        updateChartDataAndLabels(dataArrays[0], labelsArrays[0], payload.temp);
+        tempHistory.push(payload.temp);
+        if (tempHistory.length > 30) tempHistory.shift();
+        updateStatsDisplay('temp', payload.temp, calculateStats(tempHistory));
+    }
 
-  charts.forEach(chart => chart.update());
+    if (payload.humidity !== undefined) {
+        updateChartDataAndLabels(dataArrays[1], labelsArrays[1], payload.humidity);
+        humidHistory.push(payload.humidity);
+        if (humidHistory.length > 30) humidHistory.shift();
+        updateStatsDisplay('humid', payload.humidity, calculateStats(humidHistory));
+    }
+
+    if (payload.soil !== undefined) {
+        updateChartDataAndLabels(dataArrays[2], labelsArrays[2], payload.soil);
+        soilHistory.push(payload.soil);
+        if (soilHistory.length > 30) soilHistory.shift();
+        updateStatsDisplay('soil', payload.soil, calculateStats(soilHistory));
+    }
+
+    charts.forEach(chart => chart.update());
 }
 
 // Ambil data dari API setiap interval waktu

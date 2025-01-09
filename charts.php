@@ -134,7 +134,7 @@ require_once './layout/sidebar.php';
 
 <!-- Include Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="js/grafik.js?v=1"></script>
+<script src="js/grafik.js?v=2"></script>
 
 <!-- Live Update Script -->
 <script>
