@@ -4,6 +4,8 @@ header("Access-Control-Allow-Methods: GET, POST");
 header("Access-Control-Allow-Headers: Content-Type");
 ?>
 
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -25,6 +27,7 @@ header("Access-Control-Allow-Headers: Content-Type");
             touch-action: manipulation;
             overflow-x: hidden;
         }
+
         #avatar-gif {
             pointer-events: none;
             -webkit-touch-callout: none;
@@ -40,32 +43,35 @@ header("Access-Control-Allow-Headers: Content-Type");
         * {
             -webkit-tap-highlight-color: transparent;
         }
+
         html {
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(-25%);
+                animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+            }
+            50% {
+                transform: translateY(0);
+                animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+            }
         }
 
         .animate-spin {
             animation: spin 1s linear infinite;
         }
 
-        @keyframes spin {
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        #preloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: white;
-            z-index: 50;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .animate-bounce {
+            animation: bounce 1s infinite;
         }
 
         .avatar-container {
@@ -83,12 +89,17 @@ header("Access-Control-Allow-Headers: Content-Type");
 </head>
 
 <body class="mx-auto text-center scroll-smooth bg-gray-200">
-    <div id="preloader">
-        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="text-green-600 bi bi-arrow-repeat animate-spin" viewBox="0 0 16 16">
-            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
-            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
-        </svg>
+    <!-- Improved Preloader -->
+    <div id="preloader" class="fixed inset-0 bg-white z-50 flex items-center justify-center transition-opacity duration-500">
+        <div class="relative">
+            <div class="w-16 h-16 border-4 border-green-200 rounded-full"></div>
+            <div class="w-16 h-16 border-4 border-green-500 rounded-full animate-spin absolute top-0 left-0 border-t-transparent"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <i class="fas fa-leaf text-green-500 animate-bounce"></i>
+            </div>
+        </div>
     </div>
+
     <div class="avatar-container">
         <img id="avatar-gif" src="" alt="Avatar GIF">
     </div>
@@ -129,6 +140,7 @@ header("Access-Control-Allow-Headers: Content-Type");
                 this.avatarElement = document.getElementById('avatar-gif');
                 this.previousCondition = null;
                 this.updateTimer = null;
+                this.isDemoMode = false;
             }
 
             init() {
@@ -136,20 +148,37 @@ header("Access-Control-Allow-Headers: Content-Type");
                 this.startAvatarUpdater();
             }
 
+            getRandomAvatar() {
+                const allAvatars = [
+                    ...AVATAR_CONFIG.gifs.normal,
+                    ...AVATAR_CONFIG.gifs.low,
+                    ...AVATAR_CONFIG.gifs.night
+                ];
+                return allAvatars[Math.floor(Math.random() * allAvatars.length)];
+            }
+
             setupEventListeners() {
                 window.addEventListener('load', async () => {
                     const preloader = document.getElementById('preloader');
                     try {
-                        // Immediately fetch and display the correct avatar based on sensor data
                         await this.updateAvatar();
                     } catch (error) {
                         console.error('Initial avatar load failed:', error);
-                        // Fallback to normal condition if initial load fails
-                        this.avatarElement.src = `/assets/avatars/${this.getRandomGif('normal')}`;
+                        this.avatarElement.src = `/assets/avatars/${this.getRandomAvatar()}`;
                     } finally {
                         setTimeout(() => {
-                            preloader.style.display = 'none';
+                            preloader.style.opacity = '0';
+                            setTimeout(() => {
+                                preloader.style.display = 'none';
+                            }, 500);
                         }, AVATAR_CONFIG.timing.preloaderDelay);
+                    }
+                });
+
+                // Change avatar when tab becomes visible (for demo mode)
+                document.addEventListener('visibilitychange', () => {
+                    if (this.isDemoMode && document.visibilityState === 'visible') {
+                        this.updateAvatar();
                     }
                 });
             }
@@ -170,10 +199,23 @@ header("Access-Control-Allow-Headers: Content-Type");
                     if (!response.ok) throw new Error('Network response was not ok');
 
                     const data = await response.json();
+                    
+                    // Check if it's demo mode
+                    if (data.product_id === "DEMO") {
+                        this.isDemoMode = true;
+                        return {
+                            temp: Math.random() * (30 - 20) + 20,
+                            humidity: Math.random() * (80 - 60) + 60,
+                            soil: Math.random() * (70 - 60) + 60,
+                            isDemo: true
+                        };
+                    }
+
                     return {
                         temp: parseFloat(data.temp),
                         humidity: parseFloat(data.humidity),
-                        soil: parseFloat(data.soil)
+                        soil: parseFloat(data.soil),
+                        isDemo: false
                     };
                 } catch (error) {
                     console.error('Error fetching sensor data:', error);
@@ -182,13 +224,9 @@ header("Access-Control-Allow-Headers: Content-Type");
             }
 
             evaluateConditions(data) {
-                if (!data) return 'normal'; // Default to normal if no data
+                if (!data) return 'normal';
 
-                const {
-                    soil,
-                    humidity,
-                    temp
-                } = data;
+                const { soil, humidity, temp } = data;
                 const thresholds = AVATAR_CONFIG.thresholds;
 
                 const isMoistureLow = soil < thresholds.soil.min || soil > thresholds.soil.max;
@@ -206,16 +244,21 @@ header("Access-Control-Allow-Headers: Content-Type");
             async updateAvatar() {
                 try {
                     const sensorData = await this.fetchSensorData();
-                    const currentCondition = this.evaluateConditions(sensorData);
 
-                    // Update avatar if it's the first load or condition has changed
+                    if (sensorData?.isDemo) {
+                        const newGif = this.getRandomAvatar();
+                        this.avatarElement.src = `/assets/avatars/${newGif}`;
+                        return 'demo';
+                    }
+
+                    const currentCondition = this.evaluateConditions(sensorData);
                     if (this.previousCondition === null || currentCondition !== this.previousCondition) {
                         const newGif = this.getRandomGif(currentCondition);
                         this.avatarElement.src = `/assets/avatars/${newGif}`;
                         this.previousCondition = currentCondition;
                     }
 
-                    return currentCondition; // Return the condition for potential use
+                    return currentCondition;
                 } catch (error) {
                     console.error('Error updating avatar:', error);
                     throw error;
@@ -223,12 +266,10 @@ header("Access-Control-Allow-Headers: Content-Type");
             }
 
             startAvatarUpdater() {
-                // Clear any existing timer
                 if (this.updateTimer) {
                     clearInterval(this.updateTimer);
                 }
 
-                // Start new update cycle
                 this.updateTimer = setInterval(
                     () => this.updateAvatar(),
                     AVATAR_CONFIG.timing.updateInterval
@@ -249,5 +290,4 @@ header("Access-Control-Allow-Headers: Content-Type");
         });
     </script>
 </body>
-
 </html>
