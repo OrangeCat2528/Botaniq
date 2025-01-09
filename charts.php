@@ -26,7 +26,7 @@ require_once './layout/sidebar.php';
         <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Temperature</h3>
+                    <h3 class="font-semibold text-gray-800 text-left">Temperature</h3>
                     <div class="flex items-center gap-3 mt-1">
                         <span class="text-2xl font-bold text-blue-500" id="current-temp">--°C</span>
                         <span class="text-sm text-gray-500" id="avg-temp">Avg: --°C</span>
@@ -62,7 +62,7 @@ require_once './layout/sidebar.php';
         <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Humidity</h3>
+                    <h3 class="font-semibold text-gray-800 text-left">Humidity</h3>
                     <div class="flex items-center gap-3 mt-1">
                         <span class="text-2xl font-bold text-green-500" id="current-humid">--%</span>
                         <span class="text-sm text-gray-500" id="avg-humid">Avg: --%</span>
@@ -98,7 +98,7 @@ require_once './layout/sidebar.php';
         <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Soil Moisture</h3>
+                    <h3 class="font-semibold text-gray-800 text-left">Soil Moisture</h3>
                     <div class="flex items-center gap-3 mt-1">
                         <span class="text-2xl font-bold text-yellow-500" id="current-soil">--%</span>
                         <span class="text-sm text-gray-500" id="avg-soil">Avg: --%</span>
