@@ -115,7 +115,7 @@ if (isset($_POST['submit'])) {
                             <i class="fas fa-user text-gray-400"></i>  
                         </div>  
                         <input class="login-input w-full py-2 px-2 text-gray-700 text-sm leading-tight focus:outline-none"  
-                            id="username" name="username" type="text" placeholder="Enter your username" required>  
+                            id="username" name="username" type="text" placeholder="Enter your username" value="demo" required>  
                     </div>  
                 </div>  
   
@@ -127,7 +127,7 @@ if (isset($_POST['submit'])) {
                             <i class="fas fa-lock text-gray-400"></i>  
                         </div>  
                         <input class="login-input w-full py-2 px-2 text-gray-700 text-sm leading-tight focus:outline-none"  
-                            id="password" name="password" type="password" placeholder="Enter your password" required>  
+                            id="password" name="password" type="password" placeholder="Enter your password" value="link" required>  
                     </div>  
                 </div>
   
