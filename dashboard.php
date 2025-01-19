@@ -31,7 +31,22 @@ if ($result && mysqli_num_rows($result) > 0) {
 <script src="js/animation.js?v=2"></script>
 
 <!-- Warning Sign -->
+<?php if ($currentUser['linked_id'] === 'DEMO'): ?>
 <div class="warning-sign mx-5 mt-4">
+    <div class="bg-amber-100 border-l-4 border-amber-500 rounded-2xl p-4">
+        <div class="flex items-center">
+            <div class="bg-amber-500/10 p-2 rounded-xl">
+                <i class="fas fa-flask text-amber-500"></i>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-amber-800 font-semibold text-left">Demo Mode</h3>
+                <p class="text-amber-700 text-sm text-left">You are currently using Demo Mode. All data here are replicated.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<?php else: ?>
+<div class="warning-sign mx-5 mt-4 hidden">
     <div class="bg-orange-100 border-l-4 border-orange-500 rounded-2xl p-4">
         <div class="flex items-center">
             <div class="bg-orange-500/10 p-2 rounded-xl">
@@ -44,6 +59,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         </div>
     </div>
 </div>
+<?php endif; ?>
 
 <!-- Avatar Container -->
 <div id="avatar-container" class="mx-5 mt-4 overflow-hidden bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl border border-gray-100">
